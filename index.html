@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#c8854a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="กินอะไร">
+<meta name="description" content="Thai food and weight tracker">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>กินอะไร · Food Log</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Mono:wght@300;400&family=Noto+Sans+Thai:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1a1410;--surface:#241e18;--surface2:#2e271f;--border:#3d3328;--accent:#c8854a;--accent2:#e0a96d;--text:#e8ddd0;--muted:#8a7a6a;--green:#7aad6e;--red:#c46b5a;--yellow:#d4aa5a;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;min-height:100vh;padding-bottom:90px;
+  background-image:radial-gradient(ellipse at 20% 0%,rgba(200,133,74,.08) 0%,transparent 60%),radial-gradient(ellipse at 80% 100%,rgba(122,173,110,.04) 0%,transparent 50%);}
+
+/* INSTALL BANNER */
+.install-banner{display:none;margin:10px 14px;background:linear-gradient(135deg,#2e271f,#241e18);border:1px solid var(--accent);border-radius:12px;padding:12px 14px;gap:12px;align-items:center;}
+.install-banner.show{display:flex;}
+.ib-text{flex:1;font-size:12px;color:var(--text);line-height:1.5;}
+.ib-text strong{color:var(--accent2);display:block;margin-bottom:2px;font-size:13px;}
+.ib-btns{display:flex;gap:6px;flex-direction:column;}
+.btn-install{background:var(--accent);color:#1a1410;border:none;border-radius:8px;padding:7px 14px;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;white-space:nowrap;}
+.btn-dismiss{background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-family:'DM Mono',monospace;font-size:10px;cursor:pointer;}
+
+/* OFFLINE BADGE */
+.offline-badge{display:none;position:fixed;top:10px;left:50%;transform:translateX(-50%);background:var(--red);color:#fff;font-size:11px;padding:5px 14px;border-radius:99px;z-index:999;}
+.offline-badge.show{display:block;}
+
+header{padding:28px 20px 18px;border-bottom:1px solid var(--border);display:flex;align-items:flex-end;justify-content:space-between;}
+.logo{font-family:'Playfair Display',serif;font-size:26px;color:var(--accent2);line-height:1;}
+.logo span{display:block;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;margin-top:4px;}
+.date-disp{font-size:10px;color:var(--muted);text-align:right;}
+
+/* WEIGHT */
+.weight-section{margin:14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;}
+.wt-main{flex:1;}
+.wt-label{font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px;}
+.wt-value{font-family:'Playfair Display',serif;font-size:32px;color:var(--accent2);line-height:1;}
+.wt-value span{font-size:13px;color:var(--muted);}
+.wt-trend{font-size:11px;margin-top:4px;color:var(--muted);}
+.wt-trend.down{color:var(--green);}.wt-trend.up{color:var(--red);}
+.wt-inputs{display:flex;flex-direction:column;gap:5px;}
+.wt-inputs input{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 10px;color:var(--text);font-family:'DM Mono',monospace;font-size:13px;width:88px;outline:none;transition:border-color .2s;}
+.wt-inputs input:focus{border-color:var(--accent);}
+.btn-wt{background:var(--accent);color:#1a1410;border:none;border-radius:8px;padding:7px 12px;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;}
+
+/* CALORIE RING */
+.cal-section{margin:0 14px 14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;align-items:center;gap:16px;}
+.ring-wrap{position:relative;width:84px;height:84px;flex-shrink:0;}
+svg.ring{width:84px;height:84px;transform:rotate(-90deg);}
+.rb{fill:none;stroke:var(--border);stroke-width:8;}
+.rf{fill:none;stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .6s cubic-bezier(.4,0,.2,1);}
+.ring-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
+.ring-center .rn{font-family:'Playfair Display',serif;font-size:17px;color:var(--text);line-height:1;}
+.ring-center .rs{font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;}
+.cal-stats{flex:1;}
+.cs-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--border);font-size:11px;}
+.cs-row:last-child{border-bottom:none;}
+.cs-row .l{color:var(--muted);}.cs-row .v{color:var(--text);}
+.cs-row .v.g{color:var(--green);}.cs-row .v.r{color:var(--red);}
+
+/* GOAL BAR */
+.gbar{margin:0 14px 12px;}
+.gbar-top{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:5px;}
+.gbar-track{height:5px;background:var(--border);border-radius:99px;overflow:hidden;}
+.gbar-fill{height:100%;border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1);}
+
+/* TABS */
+.tabs{display:flex;margin:0 14px 12px;gap:3px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px;}
+.tab{flex:1;padding:7px;text-align:center;font-size:10px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;border-radius:7px;transition:all .2s;color:var(--muted);}
+.tab.active{background:var(--accent);color:#1a1410;}
+
+/* ADD FORM */
+.add-form{margin:0 14px 14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;display:none;}
+.add-form.open{display:block;}
+.search-wrap{position:relative;margin-bottom:10px;}
+.search-wrap input{width:100%;background:var(--surface2);border:1px solid var(--accent);border-radius:8px;padding:10px 12px 10px 36px;color:var(--text);font-family:'Noto Sans Thai','DM Mono',monospace;font-size:13px;outline:none;}
+.search-wrap input::placeholder{color:var(--muted);}
+.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none;}
+.autocomplete-list{position:absolute;left:0;right:0;top:calc(100% + 4px);background:var(--surface2);border:1px solid var(--accent);border-radius:10px;max-height:220px;overflow-y:auto;z-index:200;display:none;box-shadow:0 8px 24px rgba(0,0,0,.5);}
+.autocomplete-list.open{display:block;}
+.ac-item{padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .15s;}
+.ac-item:last-child{border-bottom:none;}
+.ac-item:hover,.ac-item.sel{background:rgba(200,133,74,.15);}
+.ac-name{font-size:13px;color:var(--text);font-family:'Noto Sans Thai','DM Mono',sans-serif;}
+.ac-name em{color:var(--accent2);font-style:normal;}
+.ac-meta{font-size:10px;color:var(--muted);margin-top:2px;}
+.ac-cal{float:right;color:var(--accent);font-size:12px;}
+.fr{display:flex;gap:7px;margin-bottom:8px;flex-wrap:wrap;}
+.fr input,.fr select{flex:1;min-width:80px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-family:'DM Mono',monospace;font-size:13px;outline:none;transition:border-color .2s;}
+.fr input::placeholder{color:var(--muted);}
+.fr input:focus,.fr select:focus{border-color:var(--accent);}
+.fr select option{background:var(--surface2);}
+.fa{display:flex;gap:7px;}
+.btn-add{background:var(--accent);color:#1a1410;border:none;border-radius:8px;padding:10px 18px;font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;flex:1;}
+.btn-cancel{background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;}
+
+/* CATEGORY PILLS */
+.cat-pills{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:8px;scrollbar-width:none;}
+.cat-pills::-webkit-scrollbar{display:none;}
+.pill{padding:5px 11px;border-radius:99px;font-size:11px;white-space:nowrap;cursor:pointer;border:1px solid var(--border);color:var(--muted);background:var(--surface2);transition:all .2s;}
+.pill.active{background:var(--accent);color:#1a1410;border-color:var(--accent);}
+
+/* MEALS */
+.meal-group{margin:0 14px 12px;}
+.mg-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:0 3px 6px;display:flex;justify-content:space-between;}
+.mg-label .mc{color:var(--accent);}
+.food-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:5px;display:flex;align-items:center;gap:10px;animation:si .25s ease;}
+@keyframes si{from{opacity:0;transform:translateY(-5px);}to{opacity:1;transform:translateY(0);}}
+.fi-icon{font-size:20px;width:28px;text-align:center;}
+.fi-info{flex:1;}
+.fi-name{font-size:13px;color:var(--text);font-family:'Noto Sans Thai','Playfair Display',serif;}
+.fi-meta{font-size:10px;color:var(--muted);margin-top:2px;}
+.fi-cal .cn{font-family:'Playfair Display',serif;font-size:16px;color:var(--accent2);}
+.fi-cal .cu{font-size:10px;color:var(--muted);}
+.fi-del{background:none;border:none;color:var(--border);font-size:18px;cursor:pointer;padding:3px;transition:color .2s;line-height:1;}
+.fi-del:hover{color:var(--red);}
+.empty{text-align:center;padding:32px 20px;color:var(--muted);font-size:13px;}
+.empty .big{font-family:'Playfair Display',serif;font-size:28px;margin-bottom:6px;}
+
+/* BROWSE DB */
+.db-section{margin:0 14px 14px;}
+.db-header{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:0 3px 8px;}
+.db-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.db-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;cursor:pointer;transition:border-color .2s;}
+.db-card:active{transform:scale(.97);}
+.db-card:hover{border-color:var(--accent);}
+.db-card .dc-name{font-size:12px;color:var(--text);font-family:'Noto Sans Thai','DM Mono',sans-serif;line-height:1.3;}
+.db-card .dc-th{font-size:11px;color:var(--muted);margin-top:2px;}
+.db-card .dc-cal{font-size:14px;color:var(--accent2);font-family:'Playfair Display',serif;margin-top:4px;}
+.db-card .dc-srv{font-size:9px;color:var(--muted);margin-top:1px;}
+
+/* HISTORY */
+.history-day{margin:0 14px 12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.hd-header{padding:10px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);}
+.hd-header .hdate{color:var(--accent2);font-family:'Playfair Display',serif;font-size:14px;}
+.hd-header .hcal{color:var(--muted);font-size:11px;}
+.hr-row{padding:8px 14px;display:flex;justify-content:space-between;font-size:12px;border-bottom:1px solid var(--border);}
+.hr-row:last-child{border-bottom:none;}
+.hr-row .hn{color:var(--text);}.hr-row .hc{color:var(--accent);}
+
+/* WEIGHT CHART */
+.wt-view{display:none;}
+.chart-section{margin:0 14px 14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.ct-title{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+canvas#wc{width:100%!important;height:110px!important;}
+
+/* FAB */
+.fab{position:fixed;bottom:24px;right:16px;width:52px;height:52px;border-radius:50%;background:var(--accent);border:none;font-size:26px;color:#1a1410;cursor:pointer;box-shadow:0 4px 20px rgba(200,133,74,.45);display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:100;}
+.fab:active{transform:scale(.92);}
+</style>
+</head>
+<body>
+
+<div class="offline-badge" id="offlineBadge">📵 Offline mode</div>
+
+<div class="install-banner" id="installBanner">
+  <div class="ib-text">
+    <strong>📲 Install กินอะไร</strong>
+    Add to home screen — works offline!
+  </div>
+  <div class="ib-btns">
+    <button class="btn-install" id="btnInstall">Install</button>
+    <button class="btn-dismiss" onclick="dismissInstall()">Later</button>
+  </div>
+</div>
+
+<header>
+  <div class="logo">กินอะไร <span>Daily Food Log</span></div>
+  <div class="date-disp" id="dd"></div>
+</header>
+
+<div class="weight-section">
+  <div class="wt-main">
+    <div class="wt-label">Weight Today</div>
+    <div class="wt-value" id="wv">— <span>kg</span></div>
+    <div class="wt-trend" id="wt2"></div>
+  </div>
+  <div class="wt-inputs">
+    <input type="number" id="wi" placeholder="kg" step="0.1" inputmode="decimal">
+    <button class="btn-wt" onclick="logW()">Log</button>
+  </div>
+</div>
+
+<div class="cal-section">
+  <div class="ring-wrap">
+    <svg class="ring" viewBox="0 0 84 84">
+      <circle class="rb" cx="42" cy="42" r="34"/>
+      <circle class="rf" id="rf" cx="42" cy="42" r="34" stroke-dasharray="213.6" stroke-dashoffset="213.6" stroke="var(--accent)"/>
+    </svg>
+    <div class="ring-center"><div class="rn" id="ce">0</div><div class="rs">kcal</div></div>
+  </div>
+  <div class="cal-stats">
+    <div class="cs-row"><span class="l">Goal</span><span class="v" id="cg">1800 kcal</span></div>
+    <div class="cs-row"><span class="l">Eaten</span><span class="v" id="cs">0 kcal</span></div>
+    <div class="cs-row"><span class="l">Left</span><span class="v g" id="cr">1800 kcal</span></div>
+  </div>
+</div>
+
+<div class="gbar">
+  <div class="gbar-top"><span>Progress</span><span id="gp">0%</span></div>
+  <div class="gbar-track"><div class="gbar-fill" id="gf" style="width:0%"></div></div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="sTab('today')">Today</div>
+  <div class="tab" onclick="sTab('browse')">Browse</div>
+  <div class="tab" onclick="sTab('history')">History</div>
+  <div class="tab" onclick="sTab('weight')">Weight</div>
+</div>
+
+<!-- ADD FORM -->
+<div class="add-form" id="af">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="fn" placeholder="Search Thai food / ค้นหาอาหาร..." autocomplete="off" oninput="onSearch()" onkeydown="onSearchKey(event)">
+    <div class="autocomplete-list" id="acList"></div>
+  </div>
+  <div class="fr">
+    <input type="number" id="fc" placeholder="kcal" inputmode="numeric">
+    <select id="fm">
+      <option value="breakfast">🌅 Breakfast</option>
+      <option value="lunch" selected>☀️ Lunch</option>
+      <option value="dinner">🌙 Dinner</option>
+      <option value="snack">🍵 Snack/Drink</option>
+    </select>
+  </div>
+  <div class="fr">
+    <input type="number" id="fg" placeholder="grams (optional)" inputmode="numeric">
+  </div>
+  <div class="fa">
+    <button class="btn-add" onclick="addFood()">+ Add Entry</button>
+    <button class="btn-cancel" onclick="closeF()">Cancel</button>
+  </div>
+</div>
+
+<!-- TODAY -->
+<div id="tv"><div id="mc"></div></div>
+
+<!-- BROWSE -->
+<div id="bv" style="display:none">
+  <div class="db-section">
+    <div class="db-header">Thai Food Database · <span id="dbCount"></span> items</div>
+    <div class="cat-pills" id="catPills"></div>
+    <div class="search-wrap" style="margin-bottom:10px">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="dbSearch" placeholder="Search / ค้นหา..." oninput="renderDB()"
+        style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px 9px 34px;color:var(--text);font-family:'Noto Sans Thai','DM Mono',monospace;font-size:12px;outline:none;">
+    </div>
+    <div class="db-grid" id="dbGrid"></div>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div id="hv" style="display:none"><div id="hc"></div></div>
+
+<!-- WEIGHT -->
+<div class="wt-view" id="wv2">
+  <div class="chart-section">
+    <div class="ct-title">Weight History</div>
+    <canvas id="wc" style="width:100%;height:110px;display:block;"></canvas>
+    <div id="wlist" style="margin-top:12px"></div>
+  </div>
+</div>
+
+<button class="fab" id="fab" onclick="togF()">+</button>
+
+<script>
+// ── THAI FOOD DATABASE ───────────────────────────
+const DB=[
+  {name:"Khao Pad (Fried Rice)",th:"ข้าวผัด",cal:450,cat:"rice",icon:"🍳",serving:"1 plate"},
+  {name:"Khao Pad Moo (Pork Fried Rice)",th:"ข้าวผัดหมู",cal:480,cat:"rice",icon:"🍳",serving:"1 plate"},
+  {name:"Khao Pad Kai (Chicken Fried Rice)",th:"ข้าวผัดไก่",cal:460,cat:"rice",icon:"🍳",serving:"1 plate"},
+  {name:"Khao Pad Goong (Shrimp Fried Rice)",th:"ข้าวผัดกุ้ง",cal:440,cat:"rice",icon:"🍳",serving:"1 plate"},
+  {name:"Khao Pad Sapparod (Pineapple Fried Rice)",th:"ข้าวผัดสับปะรด",cal:490,cat:"rice",icon:"🍍",serving:"1 plate"},
+  {name:"Khao Mun Gai (Chicken Rice)",th:"ข้าวมันไก่",cal:520,cat:"rice",icon:"🍚",serving:"1 plate"},
+  {name:"Khao Na Pet (Duck on Rice)",th:"ข้าวหน้าเป็ด",cal:560,cat:"rice",icon:"🦆",serving:"1 plate"},
+  {name:"Khao Kha Moo (Braised Pork Leg Rice)",th:"ข้าวขาหมู",cal:620,cat:"rice",icon:"🍖",serving:"1 plate"},
+  {name:"Khao Tom (Rice Soup)",th:"ข้าวต้ม",cal:200,cat:"rice",icon:"🍲",serving:"1 bowl"},
+  {name:"Khao Niaw (Sticky Rice)",th:"ข้าวเหนียว",cal:160,cat:"rice",icon:"🍚",serving:"100g"},
+  {name:"Khao Suay (Steamed Rice)",th:"ข้าวสวย",cal:130,cat:"rice",icon:"🍚",serving:"100g"},
+  {name:"Khao Kluk Kapi (Shrimp Paste Rice)",th:"ข้าวคลุกกะปิ",cal:480,cat:"rice",icon:"🦐",serving:"1 plate"},
+  {name:"Pad Thai",th:"ผัดไทย",cal:490,cat:"noodles",icon:"🍜",serving:"1 plate"},
+  {name:"Pad Thai Goong (with Shrimp)",th:"ผัดไทยกุ้ง",cal:510,cat:"noodles",icon:"🦐",serving:"1 plate"},
+  {name:"Pad See Ew",th:"ผัดซีอิ๊ว",cal:520,cat:"noodles",icon:"🍜",serving:"1 plate"},
+  {name:"Pad Kee Mao (Drunken Noodles)",th:"ผัดขี้เมา",cal:500,cat:"noodles",icon:"🌶️",serving:"1 plate"},
+  {name:"Guay Teow (Noodle Soup)",th:"ก๋วยเตี๋ยว",cal:350,cat:"noodles",icon:"🍜",serving:"1 bowl"},
+  {name:"Guay Teow Nuea (Beef Noodle)",th:"ก๋วยเตี๋ยวเนื้อ",cal:420,cat:"noodles",icon:"🥩",serving:"1 bowl"},
+  {name:"Rad Na (Noodles with Gravy)",th:"ราดหน้า",cal:480,cat:"noodles",icon:"🍜",serving:"1 plate"},
+  {name:"Bamee (Egg Noodles BBQ Pork)",th:"บะหมี่",cal:420,cat:"noodles",icon:"🍜",serving:"1 bowl"},
+  {name:"Khao Soi",th:"ข้าวซอย",cal:600,cat:"noodles",icon:"🍛",serving:"1 bowl"},
+  {name:"Guay Chap",th:"กวยจั๊บ",cal:400,cat:"noodles",icon:"🍜",serving:"1 bowl"},
+  {name:"Green Curry (Gaeng Keow Wan)",th:"แกงเขียวหวาน",cal:380,cat:"curry",icon:"🍛",serving:"1 bowl"},
+  {name:"Red Curry (Gaeng Daeng)",th:"แกงแดง",cal:360,cat:"curry",icon:"🍛",serving:"1 bowl"},
+  {name:"Massaman Curry",th:"แกงมัสมั่น",cal:420,cat:"curry",icon:"🍛",serving:"1 bowl"},
+  {name:"Panang Curry",th:"พะแนง",cal:390,cat:"curry",icon:"🍛",serving:"1 bowl"},
+  {name:"Yellow Curry (Gaeng Kari)",th:"แกงกะหรี่",cal:370,cat:"curry",icon:"🍛",serving:"1 bowl"},
+  {name:"Gaeng Om (Isan Herbal Curry)",th:"แกงอ่อม",cal:180,cat:"curry",icon:"🌿",serving:"1 bowl"},
+  {name:"Tom Yam Goong",th:"ต้มยำกุ้ง",cal:220,cat:"soup",icon:"🦐",serving:"1 bowl"},
+  {name:"Tom Kha Gai",th:"ต้มข่าไก่",cal:280,cat:"soup",icon:"🍲",serving:"1 bowl"},
+  {name:"Tom Saap (Isan Spicy Soup)",th:"ต้มแซ่บ",cal:200,cat:"soup",icon:"🌶️",serving:"1 bowl"},
+  {name:"Gaeng Liang (Vegetable Soup)",th:"แกงเลียง",cal:120,cat:"soup",icon:"🥦",serving:"1 bowl"},
+  {name:"Gaeng Jued (Clear Soup)",th:"แกงจืด",cal:100,cat:"soup",icon:"🍲",serving:"1 bowl"},
+  {name:"Pad Krapao Moo (Pork Basil)",th:"ผัดกระเพราหมู",cal:420,cat:"stirfry",icon:"🌿",serving:"1 plate"},
+  {name:"Pad Krapao Kai (Chicken Basil)",th:"ผัดกระเพราไก่",cal:400,cat:"stirfry",icon:"🐓",serving:"1 plate"},
+  {name:"Pad Krapao Kai + Egg",th:"ผัดกระเพราไข่ดาว",cal:530,cat:"stirfry",icon:"🍳",serving:"1 plate"},
+  {name:"Pad Krapao Nuea (Beef Basil)",th:"ผัดกระเพราเนื้อ",cal:450,cat:"stirfry",icon:"🥩",serving:"1 plate"},
+  {name:"Pad Pak Boong (Morning Glory)",th:"ผัดผักบุ้ง",cal:160,cat:"stirfry",icon:"🌿",serving:"1 plate"},
+  {name:"Pad Pak Ruam (Mixed Veg)",th:"ผัดผักรวม",cal:180,cat:"stirfry",icon:"🥦",serving:"1 plate"},
+  {name:"Pad Woon Sen (Glass Noodles)",th:"ผัดวุ้นเส้น",cal:320,cat:"stirfry",icon:"🍜",serving:"1 plate"},
+  {name:"Pad Cashew Chicken",th:"ไก่ผัดเม็ดมะม่วง",cal:440,cat:"stirfry",icon:"🥜",serving:"1 plate"},
+  {name:"Pad Prik King",th:"ผัดพริกขิง",cal:380,cat:"stirfry",icon:"🌶️",serving:"1 plate"},
+  {name:"Som Tam Thai (Papaya Salad)",th:"ส้มตำไทย",cal:160,cat:"isan",icon:"🥗",serving:"1 plate"},
+  {name:"Som Tam Poo (with Crab)",th:"ส้มตำปู",cal:140,cat:"isan",icon:"🦀",serving:"1 plate"},
+  {name:"Som Tam Pla Ra (Isan Style)",th:"ส้มตำปลาร้า",cal:150,cat:"isan",icon:"🥗",serving:"1 plate"},
+  {name:"Larb Moo (Pork Larb)",th:"ลาบหมู",cal:280,cat:"isan",icon:"🌿",serving:"1 plate"},
+  {name:"Larb Kai (Chicken Larb)",th:"ลาบไก่",cal:260,cat:"isan",icon:"🐓",serving:"1 plate"},
+  {name:"Nam Tok Moo (Pork Waterfall)",th:"น้ำตกหมู",cal:290,cat:"isan",icon:"🌿",serving:"1 plate"},
+  {name:"Gai Yang (Grilled Chicken)",th:"ไก่ย่าง",cal:300,cat:"isan",icon:"🍗",serving:"1 piece"},
+  {name:"Sai Krok Isan (Fermented Sausage)",th:"ไส้กรอกอีสาน",cal:260,cat:"isan",icon:"🌭",serving:"2 pieces"},
+  {name:"Moo Ping (Pork Skewer)",th:"หมูปิ้ง",cal:180,cat:"isan",icon:"🍢",serving:"2 sticks"},
+  {name:"Mango Sticky Rice",th:"ข้าวเหนียวมะม่วง",cal:380,cat:"isan",icon:"🥭",serving:"1 plate"},
+  {name:"Gaeng Khanun (Jackfruit Curry)",th:"แกงขนุน",cal:240,cat:"isan",icon:"🍃",serving:"1 bowl"},
+  {name:"Moo Grob (Crispy Pork)",th:"หมูกรอบ",cal:420,cat:"grilled",icon:"🐷",serving:"100g"},
+  {name:"Satay Skewers",th:"สะเต๊ะ",cal:220,cat:"grilled",icon:"🍢",serving:"4 sticks"},
+  {name:"Pla Pao (Grilled Salt Fish)",th:"ปลาเผา",cal:280,cat:"grilled",icon:"🐟",serving:"1 fish"},
+  {name:"Gai Tod (Fried Chicken)",th:"ไก่ทอด",cal:340,cat:"grilled",icon:"🍗",serving:"1 piece"},
+  {name:"Moo Tod (Fried Pork)",th:"หมูทอด",cal:360,cat:"grilled",icon:"🥩",serving:"100g"},
+  {name:"Nuea Yang (Grilled Beef)",th:"เนื้อย่าง",cal:300,cat:"grilled",icon:"🥩",serving:"100g"},
+  {name:"Ped Yang (Roast Duck)",th:"เป็ดย่าง",cal:380,cat:"grilled",icon:"🦆",serving:"100g"},
+  {name:"Khanom Buang (Thai Crepe)",th:"ขนมเบื้อง",cal:180,cat:"snack",icon:"🥞",serving:"3 pcs"},
+  {name:"Khanom Krok (Coconut Pancake)",th:"ขนมครก",cal:200,cat:"snack",icon:"🥞",serving:"6 pcs"},
+  {name:"Roti",th:"โรตี",cal:280,cat:"snack",icon:"🫓",serving:"1 piece"},
+  {name:"Tod Mun Pla (Fish Cake)",th:"ทอดมันปลา",cal:240,cat:"snack",icon:"🐟",serving:"5 pcs"},
+  {name:"Por Pia Tod (Spring Roll)",th:"ปอเปี๊ยะทอด",cal:220,cat:"snack",icon:"🥢",serving:"3 rolls"},
+  {name:"Hoi Tod (Oyster Omelette)",th:"หอยทอด",cal:380,cat:"snack",icon:"🦪",serving:"1 plate"},
+  {name:"Tao Hu Tod (Fried Tofu)",th:"เต้าหู้ทอด",cal:180,cat:"snack",icon:"🧊",serving:"6 pcs"},
+  {name:"Pa Thong Ko (Thai Doughnut)",th:"ปาท่องโก๋",cal:220,cat:"breakfast",icon:"🥐",serving:"2 pcs"},
+  {name:"Kai Jiaw (Thai Omelette)",th:"ไข่เจียว",cal:280,cat:"breakfast",icon:"🍳",serving:"1 omelette"},
+  {name:"Kai Dao (Fried Egg)",th:"ไข่ดาว",cal:100,cat:"breakfast",icon:"🍳",serving:"1 egg"},
+  {name:"Jok (Rice Congee)",th:"โจ๊ก",cal:200,cat:"breakfast",icon:"🍲",serving:"1 bowl"},
+  {name:"Khanom Pang Pao (Grilled Toast)",th:"ขนมปังปิ้ง",cal:200,cat:"breakfast",icon:"🍞",serving:"2 slices"},
+  {name:"Yam Woon Sen (Glass Noodle Salad)",th:"ยำวุ้นเส้น",cal:200,cat:"salad",icon:"🥗",serving:"1 plate"},
+  {name:"Yam Talay (Seafood Salad)",th:"ยำทะเล",cal:220,cat:"salad",icon:"🦞",serving:"1 plate"},
+  {name:"Yam Nuea Yang (Grilled Beef Salad)",th:"ยำเนื้อย่าง",cal:280,cat:"salad",icon:"🥗",serving:"1 plate"},
+  {name:"Pla Goong (Shrimp Salad)",th:"พล่ากุ้ง",cal:180,cat:"salad",icon:"🦐",serving:"1 plate"},
+  {name:"Pla Nueng Manao (Steamed Fish)",th:"ปลานึ่งมะนาว",cal:220,cat:"seafood",icon:"🐟",serving:"1 fish"},
+  {name:"Pla Tod (Fried Fish)",th:"ปลาทอด",cal:300,cat:"seafood",icon:"🐟",serving:"1 fish"},
+  {name:"Goong Pad Nam Prik Pao",th:"กุ้งผัดน้ำพริกเผา",cal:280,cat:"seafood",icon:"🦐",serving:"1 plate"},
+  {name:"Pla Muk Yang (Grilled Squid)",th:"ปลาหมึกย่าง",cal:200,cat:"seafood",icon:"🦑",serving:"1 portion"},
+  {name:"Pu Nim Tod (Soft Shell Crab)",th:"ปูนิ่มทอด",cal:320,cat:"seafood",icon:"🦀",serving:"1 crab"},
+  {name:"Lod Chong (Pandan Coconut)",th:"ลอดช่อง",cal:220,cat:"dessert",icon:"🍵",serving:"1 cup"},
+  {name:"Kluay Buat Chee (Banana Coconut)",th:"กล้วยบวชชี",cal:200,cat:"dessert",icon:"🍌",serving:"1 bowl"},
+  {name:"Tub Tim Krob",th:"ทับทิมกรอบ",cal:180,cat:"dessert",icon:"🍧",serving:"1 cup"},
+  {name:"Kluay Kaek (Fried Banana)",th:"กล้วยแขก",cal:180,cat:"dessert",icon:"🍌",serving:"2 pcs"},
+  {name:"Coconut Ice Cream",th:"ไอศกรีมกะทิ",cal:220,cat:"dessert",icon:"🍦",serving:"1 scoop"},
+  {name:"Cha Yen (Thai Iced Tea)",th:"ชาเย็น",cal:180,cat:"drinks",icon:"🧋",serving:"1 glass"},
+  {name:"Cha Nom Yen (Thai Milk Tea)",th:"ชานมเย็น",cal:200,cat:"drinks",icon:"🧋",serving:"1 glass"},
+  {name:"Oliang (Thai Iced Coffee)",th:"โอเลี้ยง",cal:80,cat:"drinks",icon:"☕",serving:"1 glass"},
+  {name:"Kafae Boran (Traditional Coffee)",th:"กาแฟโบราณ",cal:120,cat:"drinks",icon:"☕",serving:"1 glass"},
+  {name:"Nam Manao (Lime Juice)",th:"น้ำมะนาว",cal:50,cat:"drinks",icon:"🍋",serving:"1 glass"},
+  {name:"Coconut Water",th:"น้ำมะพร้าว",cal:60,cat:"drinks",icon:"🥥",serving:"1 coconut"},
+  {name:"Nam Khing (Ginger Drink)",th:"น้ำขิง",cal:80,cat:"drinks",icon:"🍵",serving:"1 glass"},
+  {name:"Nom Yen (Pink Milk)",th:"นมเย็น",cal:160,cat:"drinks",icon:"🥛",serving:"1 glass"},
+  {name:"Beer Chang",th:"เบียร์ช้าง",cal:150,cat:"drinks",icon:"🍺",serving:"320ml"},
+  {name:"Beer Singha",th:"เบียร์สิงห์",cal:148,cat:"drinks",icon:"🍺",serving:"320ml"},
+  {name:"Thai Rum (Ruang Khao)",th:"เหล้าขาว",cal:100,cat:"drinks",icon:"🥃",serving:"30ml"},
+];
+
+const CATS=[
+  {id:'all',label:'All'},{id:'rice',label:'Rice 🍚'},{id:'noodles',label:'Noodles 🍜'},
+  {id:'curry',label:'Curry 🍛'},{id:'soup',label:'Soup 🍲'},{id:'stirfry',label:'Stir-fry 🥘'},
+  {id:'isan',label:'Isan อีสาน'},{id:'grilled',label:'Grilled 🔥'},{id:'snack',label:'Snacks 🍢'},
+  {id:'salad',label:'Salads 🥗'},{id:'seafood',label:'Seafood 🐟'},{id:'breakfast',label:'Breakfast ☀️'},
+  {id:'dessert',label:'Sweets 🍮'},{id:'drinks',label:'Drinks 🧋'},
+];
+
+// ── STATE ───────────────────────────────────────
+const GOAL=1800;
+let S=JSON.parse(localStorage.getItem('kinaarai_v1')||'null')||{weights:[],logs:[]};
+const save=()=>localStorage.setItem('kinaarai_v1',JSON.stringify(S));
+const tod=()=>new Date().toISOString().slice(0,10);
+const FICONS={breakfast:['🥣','🍳','🥞'],lunch:['🍚','🥗','🍜'],dinner:['🍲','🫕','🥘'],snack:['🍵','🧃','🍌']};
+const autoIcon=m=>FICONS[m][Math.floor(Math.random()*FICONS[m].length)];
+const ML={breakfast:'🌅 Breakfast',lunch:'☀️ Lunch',dinner:'🌙 Dinner',snack:'🍵 Snacks & Drinks'};
+let acSel=-1,activeCat='all';
+
+// ── PWA ─────────────────────────────────────────
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();deferredPrompt=e;
+  if(!localStorage.getItem('install_dismissed'))
+    document.getElementById('installBanner').classList.add('show');
+});
+document.getElementById('btnInstall').addEventListener('click',async()=>{
+  if(!deferredPrompt)return;
+  deferredPrompt.prompt();
+  const{outcome}=await deferredPrompt.userChoice;
+  if(outcome==='accepted')document.getElementById('installBanner').classList.remove('show');
+  deferredPrompt=null;
+});
+function dismissInstall(){
+  document.getElementById('installBanner').classList.remove('show');
+  localStorage.setItem('install_dismissed','1');
+}
+window.addEventListener('online',()=>document.getElementById('offlineBadge').classList.remove('show'));
+window.addEventListener('offline',()=>document.getElementById('offlineBadge').classList.add('show'));
+if(!navigator.onLine)document.getElementById('offlineBadge').classList.add('show');
+if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+
+// ── INIT ────────────────────────────────────────
+function init(){
+  const d=new Date();
+  document.getElementById('dd').textContent=d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('dbCount').textContent=DB.length;
+  buildCatPills();rW();rCal();rMeals();
+}
+
+// ── WEIGHT ──────────────────────────────────────
+function rW(){
+  const ws=S.weights;
+  if(!ws.length){document.getElementById('wv').innerHTML='— <span>kg</span>';document.getElementById('wt2').textContent='No data';return;}
+  const cur=ws[ws.length-1].value;
+  document.getElementById('wv').innerHTML=`${cur.toFixed(1)} <span>kg</span>`;
+  if(ws.length>=2){
+    const d=(cur-ws[ws.length-2].value).toFixed(1);
+    const el=document.getElementById('wt2');
+    if(d<0){el.textContent=`▼ ${Math.abs(d)} kg`;el.className='wt-trend down';}
+    else if(d>0){el.textContent=`▲ ${d} kg`;el.className='wt-trend up';}
+    else{el.textContent='= No change';el.className='wt-trend';}
+  }else document.getElementById('wt2').textContent='First entry';
+}
+function logW(){
+  const v=parseFloat(document.getElementById('wi').value);
+  if(!v||v<20||v>300)return;
+  S.weights.push({date:tod(),value:v});
+  document.getElementById('wi').value='';
+  save();rW();
+  if(document.getElementById('wv2').style.display!=='none')rWChart();
+}
+
+// ── CALORIES ────────────────────────────────────
+function rCal(){
+  const logs=S.logs.filter(l=>l.date===tod());
+  const eaten=logs.reduce((s,l)=>s+l.cal,0);
+  const rem=Math.max(0,GOAL-eaten);
+  const pct=Math.min(1,eaten/GOAL);
+  document.getElementById('ce').textContent=eaten;
+  document.getElementById('cs').textContent=eaten+' kcal';
+  document.getElementById('cr').textContent=rem+' kcal';
+  document.getElementById('cr').className='v '+(eaten>GOAL?'r':'g');
+  document.getElementById('rf').style.strokeDashoffset=213.6-(213.6*pct);
+  document.getElementById('rf').style.stroke=eaten>GOAL?'var(--red)':'var(--accent)';
+  const p=Math.round(pct*100);
+  document.getElementById('gp').textContent=p+'%';
+  const f=document.getElementById('gf');
+  f.style.width=p+'%';
+  f.style.background=eaten>GOAL?'var(--red)':p>80?'var(--yellow)':'var(--accent)';
+}
+
+// ── MEALS ───────────────────────────────────────
+function rMeals(){
+  const logs=S.logs.filter(l=>l.date===tod());
+  const mc=document.getElementById('mc');
+  if(!logs.length){mc.innerHTML='<div class="empty"><div class="big">🍽</div>Nothing logged yet.<br>Tap + to add a meal.</div>';return;}
+  let h='';
+  for(const m of['breakfast','lunch','dinner','snack']){
+    const items=logs.filter(l=>l.meal===m);if(!items.length)continue;
+    const tot=items.reduce((s,l)=>s+l.cal,0);
+    h+=`<div class="meal-group"><div class="mg-label"><span>${ML[m]}</span><span class="mc">${tot} kcal</span></div>`;
+    for(const it of items)h+=`<div class="food-item"><div class="fi-icon">${it.icon||'🍽'}</div><div class="fi-info"><div class="fi-name">${it.name}</div><div class="fi-meta">${it.th?it.th+' · ':''}${it.cal} kcal</div></div><div class="fi-cal"><div class="cn">${it.cal}</div><div class="cu">kcal</div></div><button class="fi-del" onclick="del('${it.id}')">×</button></div>`;
+    h+='</div>';
+  }
+  mc.innerHTML=h;
+}
+function del(id){S.logs=S.logs.filter(l=>l.id!==id);save();rCal();rMeals();}
+
+// ── AUTOCOMPLETE ────────────────────────────────
+function onSearch(){
+  const q=document.getElementById('fn').value.trim().toLowerCase();
+  const list=document.getElementById('acList');acSel=-1;
+  if(!q){list.classList.remove('open');return;}
+  const res=DB.filter(f=>f.name.toLowerCase().includes(q)||f.th.includes(q)).slice(0,8);
+  if(!res.length){list.classList.remove('open');return;}
+  list.innerHTML=res.map((f,i)=>{
+    const hn=f.name.replace(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`,'gi'),'<em>$1</em>');
+    return `<div class="ac-item" onclick="selectAC(${i})"><span class="ac-cal">${f.cal} kcal</span><div class="ac-name">${f.icon} ${hn}</div><div class="ac-meta">${f.th} · ${f.serving}</div></div>`;
+  }).join('');
+  list._res=res;list.classList.add('open');
+}
+function onSearchKey(e){
+  const list=document.getElementById('acList');
+  const items=list.querySelectorAll('.ac-item');if(!items.length)return;
+  if(e.key==='ArrowDown'){e.preventDefault();acSel=Math.min(acSel+1,items.length-1);items.forEach((el,i)=>el.classList.toggle('sel',i===acSel));}
+  else if(e.key==='ArrowUp'){e.preventDefault();acSel=Math.max(acSel-1,0);items.forEach((el,i)=>el.classList.toggle('sel',i===acSel));}
+  else if(e.key==='Enter'&&acSel>=0){e.preventDefault();selectAC(acSel);}
+  else if(e.key==='Escape')list.classList.remove('open');
+}
+function selectAC(i){
+  const f=(document.getElementById('acList')._res||[])[i];if(!f)return;
+  const el=document.getElementById('fn');
+  el.value=f.name;el.dataset.th=f.th;el.dataset.icon=f.icon;
+  document.getElementById('fc').value=f.cal;
+  document.getElementById('acList').classList.remove('open');
+  document.getElementById('fc').focus();
+}
+document.addEventListener('click',e=>{if(!e.target.closest('.search-wrap'))document.getElementById('acList').classList.remove('open');});
+
+// ── ADD FOOD ────────────────────────────────────
+function togF(){
+  const f=document.getElementById('af');
+  const open=f.classList.toggle('open');
+  document.getElementById('fab').textContent=open?'×':'+';
+  if(open)setTimeout(()=>document.getElementById('fn').focus(),100);
+}
+function closeF(){document.getElementById('af').classList.remove('open');document.getElementById('fab').textContent='+';}
+function addFood(){
+  const el=document.getElementById('fn');
+  const name=el.value.trim();const cal=parseInt(document.getElementById('fc').value);
+  const meal=document.getElementById('fm').value;const grams=document.getElementById('fg').value;
+  if(!name||!cal)return;
+  S.logs.push({id:Date.now().toString(),date:tod(),meal,name,th:el.dataset.th||'',cal,grams:grams?parseInt(grams):null,icon:el.dataset.icon||autoIcon(meal)});
+  el.value='';el.dataset.th='';el.dataset.icon='';
+  document.getElementById('fc').value='';document.getElementById('fg').value='';
+  save();rCal();rMeals();closeF();
+}
+
+// ── BROWSE ──────────────────────────────────────
+function buildCatPills(){
+  document.getElementById('catPills').innerHTML=CATS.map(c=>`<div class="pill${c.id==='all'?' active':''}" data-cat="${c.id}" onclick="setCat('${c.id}')">${c.label}</div>`).join('');
+}
+function setCat(id){
+  activeCat=id;
+  document.querySelectorAll('.pill').forEach(p=>p.classList.toggle('active',p.dataset.cat===id));
+  renderDB();
+}
+function renderDB(){
+  const q=(document.getElementById('dbSearch')||{value:''}).value.trim().toLowerCase();
+  let items=DB;
+  if(activeCat!=='all')items=items.filter(f=>f.cat===activeCat);
+  if(q)items=items.filter(f=>f.name.toLowerCase().includes(q)||f.th.includes(q));
+  document.getElementById('dbGrid').innerHTML=items.map(f=>`
+    <div class="db-card" onclick="quickAdd(${DB.indexOf(f)})">
+      <div class="dc-name">${f.icon} ${f.name}</div>
+      <div class="dc-th">${f.th}</div>
+      <div class="dc-cal">${f.cal} kcal</div>
+      <div class="dc-srv">${f.serving}</div>
+    </div>`).join('');
+}
+function quickAdd(i){
+  const f=DB[i];
+  document.getElementById('fn').value=f.name;
+  document.getElementById('fn').dataset.th=f.th;
+  document.getElementById('fn').dataset.icon=f.icon;
+  document.getElementById('fc').value=f.cal;
+  sTab('today');togF();
+}
+
+// ── TABS ────────────────────────────────────────
+function sTab(t){
+  ['today','browse','history','weight'].forEach((n,i)=>document.querySelectorAll('.tab')[i].classList.toggle('active',n===t));
+  document.getElementById('tv').style.display=t==='today'?'block':'none';
+  document.getElementById('bv').style.display=t==='browse'?'block':'none';
+  document.getElementById('hv').style.display=t==='history'?'block':'none';
+  document.getElementById('wv2').style.display=t==='weight'?'block':'none';
+  if(t==='history')rHist();
+  if(t==='weight')setTimeout(rWChart,50);
+  if(t==='browse')renderDB();
+}
+
+// ── HISTORY ─────────────────────────────────────
+function rHist(){
+  const hc=document.getElementById('hc');
+  const dates=[...new Set(S.logs.map(l=>l.date))].sort().reverse();
+  if(!dates.length){hc.innerHTML='<div class="empty"><div class="big">📖</div>No history yet.</div>';return;}
+  let h='';
+  for(const d of dates){
+    const items=S.logs.filter(l=>l.date===d);
+    const tot=items.reduce((s,l)=>s+l.cal,0);
+    const label=new Date(d+'T12:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+    h+=`<div class="history-day"><div class="hd-header"><span class="hdate">${label}</span><span class="hcal">${tot} kcal · ${items.length} items</span></div>`;
+    for(const it of items)h+=`<div class="hr-row"><span class="hn">${it.icon||''} ${it.name}${it.th?' ('+it.th+')':''}</span><span class="hc">${it.cal} kcal</span></div>`;
+    h+='</div>';
+  }
+  hc.innerHTML=h;
+}
+
+// ── WEIGHT CHART ────────────────────────────────
+function rWChart(){
+  const ws=S.weights.slice(-14);
+  const wl=document.getElementById('wlist');
+  if(!ws.length){wl.innerHTML='<div style="text-align:center;color:var(--muted);font-size:12px;padding:16px 0">No weight data yet</div>';return;}
+  const cv=document.getElementById('wc');
+  const ctx=cv.getContext('2d');
+  const W=cv.offsetWidth||280,H=110;
+  cv.width=W*devicePixelRatio;cv.height=H*devicePixelRatio;ctx.scale(devicePixelRatio,devicePixelRatio);
+  const vals=ws.map(w=>w.value);
+  const mn=Math.min(...vals)-1,mx=Math.max(...vals)+1;
+  const xs=W/(ws.length>1?ws.length-1:1);
+  const ys=v=>H-14-((v-mn)/(mx-mn))*(H-28);
+  ctx.clearRect(0,0,W,H);
+  ctx.strokeStyle='#3d3328';ctx.lineWidth=1;
+  for(let i=0;i<=3;i++){const y=6+(H-20)*i/3;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  if(ws.length>1){
+    const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgba(200,133,74,.28)');g.addColorStop(1,'rgba(200,133,74,0)');
+    ctx.beginPath();ctx.moveTo(0,ys(vals[0]));
+    for(let i=1;i<ws.length;i++)ctx.lineTo(i*xs,ys(vals[i]));
+    ctx.lineTo((ws.length-1)*xs,H);ctx.lineTo(0,H);ctx.closePath();ctx.fillStyle=g;ctx.fill();
+    ctx.beginPath();ctx.strokeStyle='#c8854a';ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.lineCap='round';
+    ctx.moveTo(0,ys(vals[0]));for(let i=1;i<ws.length;i++)ctx.lineTo(i*xs,ys(vals[i]));ctx.stroke();
+  }
+  for(let i=0;i<ws.length;i++){ctx.beginPath();ctx.arc(i*xs,ys(vals[i]),4,0,Math.PI*2);ctx.fillStyle='#e0a96d';ctx.fill();}
+  const last=ws[ws.length-1];
+  ctx.fillStyle='#e0a96d';ctx.font='10px DM Mono,monospace';ctx.textAlign='center';
+  ctx.fillText(last.value.toFixed(1),(ws.length-1)*xs,ys(last.value)-9);
+  let wh='';
+  for(const w of ws.slice().reverse().slice(0,6)){
+    const label=new Date(w.date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+    wh+=`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--muted)">${label}</span><span style="color:var(--accent2);font-family:'Playfair Display',serif;font-size:15px">${w.value.toFixed(1)} kg</span></div>`;
+  }
+  wl.innerHTML=wh;
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&document.getElementById('af').classList.contains('open')&&acSel<0)addFood();
+});
+
+init();
+</script>
+</body>
+</html>
