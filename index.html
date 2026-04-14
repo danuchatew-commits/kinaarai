@@ -7,7 +7,6 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="กินอะไร">
-<meta name="description" content="Thai food and weight tracker">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>กินอะไร · Food Log</title>
@@ -18,45 +17,88 @@
 body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;min-height:100vh;padding-bottom:90px;
   background-image:radial-gradient(ellipse at 20% 0%,rgba(200,133,74,.08) 0%,transparent 60%),radial-gradient(ellipse at 80% 100%,rgba(122,173,110,.04) 0%,transparent 50%);}
 
-/* INSTALL BANNER */
-.install-banner{display:none;margin:10px 14px;background:linear-gradient(135deg,#2e271f,#241e18);border:1px solid var(--accent);border-radius:12px;padding:12px 14px;gap:12px;align-items:center;}
-.install-banner.show{display:flex;}
-.ib-text{flex:1;font-size:12px;color:var(--text);line-height:1.5;}
-.ib-text strong{color:var(--accent2);display:block;margin-bottom:2px;font-size:13px;}
-.ib-btns{display:flex;gap:6px;flex-direction:column;}
-.btn-install{background:var(--accent);color:#1a1410;border:none;border-radius:8px;padding:7px 14px;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;white-space:nowrap;}
-.btn-dismiss{background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-family:'DM Mono',monospace;font-size:10px;cursor:pointer;}
+/* ── LOGIN SCREEN ─────────────────────────────── */
+#loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;}
+.login-logo{font-family:'Playfair Display',serif;font-size:42px;color:var(--accent2);margin-bottom:6px;}
+.login-sub{font-size:11px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;margin-bottom:40px;}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;width:100%;max-width:340px;}
+.login-title{font-size:13px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px;text-align:center;}
+.user-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.user-btn{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:border-color .2s;}
+.user-btn:hover{border-color:var(--accent);}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:16px;font-family:'Playfair Display',serif;color:#1a1410;flex-shrink:0;}
+.user-info{flex:1;text-align:left;}
+.user-name{font-size:14px;color:var(--text);}
+.user-meta{font-size:10px;color:var(--muted);margin-top:2px;}
+.divider{text-align:center;font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin:12px 0;position:relative;}
+.divider::before,.divider::after{content:'';position:absolute;top:50%;width:40%;height:1px;background:var(--border);}
+.divider::before{left:0;}.divider::after{right:0;}
+.btn-new-user{width:100%;background:transparent;border:1px dashed var(--accent);border-radius:10px;padding:12px;color:var(--accent);font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;transition:all .2s;}
+.btn-new-user:hover{background:rgba(200,133,74,.1);}
 
-/* OFFLINE BADGE */
-.offline-badge{display:none;position:fixed;top:10px;left:50%;transform:translateX(-50%);background:var(--red);color:#fff;font-size:11px;padding:5px 14px;border-radius:99px;z-index:999;}
-.offline-badge.show{display:block;}
+/* ── PIN SCREEN ───────────────────────────────── */
+#pinScreen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;}
+.pin-title{font-size:13px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;}
+.pin-username{font-family:'Playfair Display',serif;font-size:24px;color:var(--accent2);margin-bottom:32px;}
+.pin-dots{display:flex;gap:12px;margin-bottom:32px;}
+.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--border);transition:all .2s;}
+.pin-dot.filled{background:var(--accent);border-color:var(--accent);}
+.pin-dot.error{background:var(--red);border-color:var(--red);}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:280px;}
+.pin-key{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;font-size:22px;cursor:pointer;transition:all .15s;color:var(--text);}
+.pin-key:active{background:var(--accent);color:#1a1410;transform:scale(.94);}
+.pin-key.del{font-size:16px;color:var(--muted);}
+.pin-key.empty{opacity:0;pointer-events:none;}
+.pin-back{margin-top:20px;background:transparent;border:none;color:var(--muted);font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;padding:8px;}
 
-header{padding:28px 20px 18px;border-bottom:1px solid var(--border);display:flex;align-items:flex-end;justify-content:space-between;}
-.logo{font-family:'Playfair Display',serif;font-size:26px;color:var(--accent2);line-height:1;}
-.logo span{display:block;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;margin-top:4px;}
-.date-disp{font-size:10px;color:var(--muted);text-align:right;}
+/* ── NEW USER SCREEN ──────────────────────────── */
+#newUserScreen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;}
+.nu-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;width:100%;max-width:340px;}
+.nu-title{font-size:13px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px;text-align:center;}
+.nu-field{margin-bottom:14px;}
+.nu-label{font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;}
+.nu-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:'DM Mono',monospace;font-size:14px;outline:none;transition:border-color .2s;}
+.nu-input:focus{border-color:var(--accent);}
+.nu-input::placeholder{color:var(--muted);}
+.pin-setup{display:flex;gap:8px;justify-content:center;margin:8px 0;}
+.pin-setup input{width:44px;height:44px;text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Mono',monospace;font-size:20px;outline:none;transition:border-color .2s;}
+.pin-setup input:focus{border-color:var(--accent);}
+.emoji-pick{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+.emoji-opt{width:40px;height:40px;border-radius:50%;border:2px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:all .2s;}
+.emoji-opt.active{border-color:var(--accent);background:rgba(200,133,74,.15);}
+.btn-create{width:100%;background:var(--accent);color:#1a1410;border:none;border-radius:10px;padding:12px;font-family:'DM Mono',monospace;font-size:13px;cursor:pointer;margin-top:8px;}
+.btn-back-login{width:100%;background:transparent;border:1px solid var(--border);border-radius:10px;padding:10px;font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);cursor:pointer;margin-top:8px;}
 
-/* WEIGHT */
-.weight-section{margin:14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;}
+/* ── MAIN APP ─────────────────────────────────── */
+#appScreen{display:none;}
+header{padding:24px 18px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:'Playfair Display',serif;font-size:22px;color:var(--accent2);line-height:1;}
+.logo span{display:block;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;margin-top:3px;}
+.header-user{display:flex;align-items:center;gap:8px;cursor:pointer;}
+.header-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:15px;color:#1a1410;}
+.header-name{font-size:12px;color:var(--text);}
+
+/* weight */
+.weight-section{margin:12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;}
 .wt-main{flex:1;}
-.wt-label{font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px;}
-.wt-value{font-family:'Playfair Display',serif;font-size:32px;color:var(--accent2);line-height:1;}
+.wt-label{font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px;}
+.wt-value{font-family:'Playfair Display',serif;font-size:30px;color:var(--accent2);line-height:1;}
 .wt-value span{font-size:13px;color:var(--muted);}
-.wt-trend{font-size:11px;margin-top:4px;color:var(--muted);}
+.wt-trend{font-size:11px;margin-top:3px;color:var(--muted);}
 .wt-trend.down{color:var(--green);}.wt-trend.up{color:var(--red);}
 .wt-inputs{display:flex;flex-direction:column;gap:5px;}
-.wt-inputs input{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 10px;color:var(--text);font-family:'DM Mono',monospace;font-size:13px;width:88px;outline:none;transition:border-color .2s;}
+.wt-inputs input{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 10px;color:var(--text);font-family:'DM Mono',monospace;font-size:13px;width:86px;outline:none;transition:border-color .2s;}
 .wt-inputs input:focus{border-color:var(--accent);}
 .btn-wt{background:var(--accent);color:#1a1410;border:none;border-radius:8px;padding:7px 12px;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;}
 
-/* CALORIE RING */
-.cal-section{margin:0 14px 14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;align-items:center;gap:16px;}
-.ring-wrap{position:relative;width:84px;height:84px;flex-shrink:0;}
-svg.ring{width:84px;height:84px;transform:rotate(-90deg);}
+/* cal ring */
+.cal-section{margin:0 12px 12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;align-items:center;gap:14px;}
+.ring-wrap{position:relative;width:80px;height:80px;flex-shrink:0;}
+svg.ring{width:80px;height:80px;transform:rotate(-90deg);}
 .rb{fill:none;stroke:var(--border);stroke-width:8;}
 .rf{fill:none;stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .6s cubic-bezier(.4,0,.2,1);}
 .ring-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
-.ring-center .rn{font-family:'Playfair Display',serif;font-size:17px;color:var(--text);line-height:1;}
+.ring-center .rn{font-family:'Playfair Display',serif;font-size:16px;color:var(--text);line-height:1;}
 .ring-center .rs{font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;}
 .cal-stats{flex:1;}
 .cs-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--border);font-size:11px;}
@@ -64,312 +106,396 @@ svg.ring{width:84px;height:84px;transform:rotate(-90deg);}
 .cs-row .l{color:var(--muted);}.cs-row .v{color:var(--text);}
 .cs-row .v.g{color:var(--green);}.cs-row .v.r{color:var(--red);}
 
-/* GOAL BAR */
-.gbar{margin:0 14px 12px;}
-.gbar-top{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:5px;}
+/* goal bar */
+.gbar{margin:0 12px 10px;}
+.gbar-top{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:4px;}
 .gbar-track{height:5px;background:var(--border);border-radius:99px;overflow:hidden;}
 .gbar-fill{height:100%;border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1);}
 
-/* TABS */
-.tabs{display:flex;margin:0 14px 12px;gap:3px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px;}
-.tab{flex:1;padding:7px;text-align:center;font-size:10px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;border-radius:7px;transition:all .2s;color:var(--muted);}
+/* tabs */
+.tabs{display:flex;margin:0 12px 10px;gap:3px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:3px;}
+.tab{flex:1;padding:6px;text-align:center;font-size:9px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;border-radius:7px;transition:all .2s;color:var(--muted);}
 .tab.active{background:var(--accent);color:#1a1410;}
 
-/* ADD FORM */
-.add-form{margin:0 14px 14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;display:none;}
+/* add form */
+.add-form{margin:0 12px 12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;display:none;}
 .add-form.open{display:block;}
-.search-wrap{position:relative;margin-bottom:10px;}
-.search-wrap input{width:100%;background:var(--surface2);border:1px solid var(--accent);border-radius:8px;padding:10px 12px 10px 36px;color:var(--text);font-family:'Noto Sans Thai','DM Mono',monospace;font-size:13px;outline:none;}
+.search-wrap{position:relative;margin-bottom:9px;}
+.search-wrap input{width:100%;background:var(--surface2);border:1px solid var(--accent);border-radius:8px;padding:9px 12px 9px 34px;color:var(--text);font-family:'Noto Sans Thai','DM Mono',monospace;font-size:13px;outline:none;}
 .search-wrap input::placeholder{color:var(--muted);}
-.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none;}
-.autocomplete-list{position:absolute;left:0;right:0;top:calc(100% + 4px);background:var(--surface2);border:1px solid var(--accent);border-radius:10px;max-height:220px;overflow-y:auto;z-index:200;display:none;box-shadow:0 8px 24px rgba(0,0,0,.5);}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none;}
+.autocomplete-list{position:absolute;left:0;right:0;top:calc(100% + 4px);background:var(--surface2);border:1px solid var(--accent);border-radius:10px;max-height:200px;overflow-y:auto;z-index:200;display:none;box-shadow:0 8px 24px rgba(0,0,0,.5);}
 .autocomplete-list.open{display:block;}
-.ac-item{padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .15s;}
+.ac-item{padding:9px 13px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .15s;}
 .ac-item:last-child{border-bottom:none;}
 .ac-item:hover,.ac-item.sel{background:rgba(200,133,74,.15);}
 .ac-name{font-size:13px;color:var(--text);font-family:'Noto Sans Thai','DM Mono',sans-serif;}
 .ac-name em{color:var(--accent2);font-style:normal;}
-.ac-meta{font-size:10px;color:var(--muted);margin-top:2px;}
+.ac-meta{font-size:10px;color:var(--muted);margin-top:1px;}
 .ac-cal{float:right;color:var(--accent);font-size:12px;}
-.fr{display:flex;gap:7px;margin-bottom:8px;flex-wrap:wrap;}
+.fr{display:flex;gap:6px;margin-bottom:7px;flex-wrap:wrap;}
 .fr input,.fr select{flex:1;min-width:80px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-family:'DM Mono',monospace;font-size:13px;outline:none;transition:border-color .2s;}
 .fr input::placeholder{color:var(--muted);}
 .fr input:focus,.fr select:focus{border-color:var(--accent);}
 .fr select option{background:var(--surface2);}
-.fa{display:flex;gap:7px;}
-.btn-add{background:var(--accent);color:#1a1410;border:none;border-radius:8px;padding:10px 18px;font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;flex:1;}
-.btn-cancel{background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;}
+.fa{display:flex;gap:6px;}
+.btn-add{background:var(--accent);color:#1a1410;border:none;border-radius:8px;padding:9px 16px;font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;flex:1;}
+.btn-cancel{background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;}
 
-/* CATEGORY PILLS */
-.cat-pills{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:8px;scrollbar-width:none;}
+/* meals */
+.cat-pills{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;margin-bottom:7px;scrollbar-width:none;}
 .cat-pills::-webkit-scrollbar{display:none;}
-.pill{padding:5px 11px;border-radius:99px;font-size:11px;white-space:nowrap;cursor:pointer;border:1px solid var(--border);color:var(--muted);background:var(--surface2);transition:all .2s;}
+.pill{padding:4px 10px;border-radius:99px;font-size:11px;white-space:nowrap;cursor:pointer;border:1px solid var(--border);color:var(--muted);background:var(--surface2);transition:all .2s;}
 .pill.active{background:var(--accent);color:#1a1410;border-color:var(--accent);}
-
-/* MEALS */
-.meal-group{margin:0 14px 12px;}
-.mg-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:0 3px 6px;display:flex;justify-content:space-between;}
+.meal-group{margin:0 12px 10px;}
+.mg-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:0 3px 5px;display:flex;justify-content:space-between;}
 .mg-label .mc{color:var(--accent);}
-.food-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:5px;display:flex;align-items:center;gap:10px;animation:si .25s ease;}
+.food-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 11px;margin-bottom:5px;display:flex;align-items:center;gap:9px;animation:si .25s ease;}
 @keyframes si{from{opacity:0;transform:translateY(-5px);}to{opacity:1;transform:translateY(0);}}
-.fi-icon{font-size:20px;width:28px;text-align:center;}
+.fi-icon{font-size:18px;width:26px;text-align:center;}
 .fi-info{flex:1;}
 .fi-name{font-size:13px;color:var(--text);font-family:'Noto Sans Thai','Playfair Display',serif;}
-.fi-meta{font-size:10px;color:var(--muted);margin-top:2px;}
-.fi-cal .cn{font-family:'Playfair Display',serif;font-size:16px;color:var(--accent2);}
+.fi-meta{font-size:10px;color:var(--muted);margin-top:1px;}
+.fi-cal .cn{font-family:'Playfair Display',serif;font-size:15px;color:var(--accent2);}
 .fi-cal .cu{font-size:10px;color:var(--muted);}
-.fi-del{background:none;border:none;color:var(--border);font-size:18px;cursor:pointer;padding:3px;transition:color .2s;line-height:1;}
+.fi-del{background:none;border:none;color:var(--border);font-size:16px;cursor:pointer;padding:3px;transition:color .2s;line-height:1;}
 .fi-del:hover{color:var(--red);}
-.empty{text-align:center;padding:32px 20px;color:var(--muted);font-size:13px;}
-.empty .big{font-family:'Playfair Display',serif;font-size:28px;margin-bottom:6px;}
+.empty{text-align:center;padding:28px 20px;color:var(--muted);font-size:13px;}
+.empty .big{font-family:'Playfair Display',serif;font-size:26px;margin-bottom:5px;}
 
-/* BROWSE DB */
-.db-section{margin:0 14px 14px;}
-.db-header{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:0 3px 8px;}
+/* STATS */
+.stats-section{margin:0 12px 12px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;}
+.stat-card-title{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px;}
+.stat-item{background:var(--surface2);border-radius:8px;padding:10px 12px;}
+.stat-item .si-val{font-family:'Playfair Display',serif;font-size:22px;color:var(--accent2);line-height:1;}
+.stat-item .si-val.green{color:var(--green);}.stat-item .si-val.red{color:var(--red);}
+.stat-item .si-label{font-size:10px;color:var(--muted);margin-top:3px;}
+.stat-item.full{grid-column:1/-1;}
+.streak-bar{display:flex;gap:3px;margin-top:8px;flex-wrap:wrap;}
+.streak-day{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--muted);}
+.streak-day.logged{background:rgba(200,133,74,.3);color:var(--accent2);}
+.streak-day.goal{background:var(--green);color:#fff;}
+.streak-day.today{border:2px solid var(--accent);}
+canvas.stat-chart{width:100%!important;display:block;}
+
+/* browse db */
+.db-section{margin:0 12px 12px;}
+.db-header{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:0 3px 7px;}
 .db-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
-.db-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;cursor:pointer;transition:border-color .2s;}
+.db-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 11px;cursor:pointer;transition:border-color .2s;}
 .db-card:active{transform:scale(.97);}
 .db-card:hover{border-color:var(--accent);}
 .db-card .dc-name{font-size:12px;color:var(--text);font-family:'Noto Sans Thai','DM Mono',sans-serif;line-height:1.3;}
 .db-card .dc-th{font-size:11px;color:var(--muted);margin-top:2px;}
-.db-card .dc-cal{font-size:14px;color:var(--accent2);font-family:'Playfair Display',serif;margin-top:4px;}
-.db-card .dc-srv{font-size:9px;color:var(--muted);margin-top:1px;}
+.db-card .dc-cal{font-size:13px;color:var(--accent2);font-family:'Playfair Display',serif;margin-top:3px;}
+.db-card .dc-srv{font-size:9px;color:var(--muted);}
 
-/* HISTORY */
-.history-day{margin:0 14px 12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
-.hd-header{padding:10px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);}
+/* history */
+.history-day{margin:0 12px 10px;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.hd-header{padding:9px 13px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);}
 .hd-header .hdate{color:var(--accent2);font-family:'Playfair Display',serif;font-size:14px;}
 .hd-header .hcal{color:var(--muted);font-size:11px;}
-.hr-row{padding:8px 14px;display:flex;justify-content:space-between;font-size:12px;border-bottom:1px solid var(--border);}
+.hr-row{padding:7px 13px;display:flex;justify-content:space-between;font-size:12px;border-bottom:1px solid var(--border);}
 .hr-row:last-child{border-bottom:none;}
-.hr-row .hn{color:var(--text);}.hr-row .hc{color:var(--accent);}
+.hr-row .hn{color:var(--text);font-family:'Noto Sans Thai','DM Mono',sans-serif;}.hr-row .hc{color:var(--accent);}
 
-/* WEIGHT CHART */
-.wt-view{display:none;}
-.chart-section{margin:0 14px 14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;}
-.ct-title{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
-canvas#wc{width:100%!important;height:110px!important;}
-
-/* FAB */
-.fab{position:fixed;bottom:24px;right:16px;width:52px;height:52px;border-radius:50%;background:var(--accent);border:none;font-size:26px;color:#1a1410;cursor:pointer;box-shadow:0 4px 20px rgba(200,133,74,.45);display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:100;}
+/* fab */
+.fab{position:fixed;bottom:22px;right:14px;width:50px;height:50px;border-radius:50%;background:var(--accent);border:none;font-size:24px;color:#1a1410;cursor:pointer;box-shadow:0 4px 20px rgba(200,133,74,.45);display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:100;}
 .fab:active{transform:scale(.92);}
+
+/* offline */
+.offline-badge{display:none;position:fixed;top:10px;left:50%;transform:translateX(-50%);background:var(--red);color:#fff;font-size:11px;padding:5px 14px;border-radius:99px;z-index:999;}
+.offline-badge.show{display:block;}
+
+.error-msg{color:var(--red);font-size:11px;text-align:center;margin-top:8px;min-height:16px;}
 </style>
 </head>
 <body>
 
-<div class="offline-badge" id="offlineBadge">📵 Offline mode</div>
+<div class="offline-badge" id="offlineBadge">📵 Offline</div>
 
-<div class="install-banner" id="installBanner">
-  <div class="ib-text">
-    <strong>📲 Install กินอะไร</strong>
-    Add to home screen — works offline!
-  </div>
-  <div class="ib-btns">
-    <button class="btn-install" id="btnInstall">Install</button>
-    <button class="btn-dismiss" onclick="dismissInstall()">Later</button>
+<!-- ── LOGIN SCREEN ───────────────────────── -->
+<div id="loginScreen">
+  <div class="login-logo">กินอะไร</div>
+  <div class="login-sub">Daily Food Log</div>
+  <div class="login-card">
+    <div class="login-title">Who's logging today?</div>
+    <div class="user-list" id="userList"></div>
+    <div class="divider">or</div>
+    <button class="btn-new-user" onclick="showNewUser()">+ Create new profile</button>
   </div>
 </div>
 
-<header>
-  <div class="logo">กินอะไร <span>Daily Food Log</span></div>
-  <div class="date-disp" id="dd"></div>
-</header>
-
-<div class="weight-section">
-  <div class="wt-main">
-    <div class="wt-label">Weight Today</div>
-    <div class="wt-value" id="wv">— <span>kg</span></div>
-    <div class="wt-trend" id="wt2"></div>
+<!-- ── PIN SCREEN ─────────────────────────── -->
+<div id="pinScreen">
+  <div class="pin-title">Enter PIN for</div>
+  <div class="pin-username" id="pinUsername"></div>
+  <div class="pin-dots" id="pinDots">
+    <div class="pin-dot"></div><div class="pin-dot"></div>
+    <div class="pin-dot"></div><div class="pin-dot"></div>
   </div>
-  <div class="wt-inputs">
-    <input type="number" id="wi" placeholder="kg" step="0.1" inputmode="decimal">
-    <button class="btn-wt" onclick="logW()">Log</button>
+  <div class="pin-pad">
+    <div class="pin-key" onclick="pinKey('1')">1</div>
+    <div class="pin-key" onclick="pinKey('2')">2</div>
+    <div class="pin-key" onclick="pinKey('3')">3</div>
+    <div class="pin-key" onclick="pinKey('4')">4</div>
+    <div class="pin-key" onclick="pinKey('5')">5</div>
+    <div class="pin-key" onclick="pinKey('6')">6</div>
+    <div class="pin-key" onclick="pinKey('7')">7</div>
+    <div class="pin-key" onclick="pinKey('8')">8</div>
+    <div class="pin-key" onclick="pinKey('9')">9</div>
+    <div class="pin-key empty"></div>
+    <div class="pin-key" onclick="pinKey('0')">0</div>
+    <div class="pin-key del" onclick="pinDel()">⌫</div>
   </div>
+  <button class="pin-back" onclick="showLogin()">← Back</button>
 </div>
 
-<div class="cal-section">
-  <div class="ring-wrap">
-    <svg class="ring" viewBox="0 0 84 84">
-      <circle class="rb" cx="42" cy="42" r="34"/>
-      <circle class="rf" id="rf" cx="42" cy="42" r="34" stroke-dasharray="213.6" stroke-dashoffset="213.6" stroke="var(--accent)"/>
-    </svg>
-    <div class="ring-center"><div class="rn" id="ce">0</div><div class="rs">kcal</div></div>
-  </div>
-  <div class="cal-stats">
-    <div class="cs-row"><span class="l">Goal</span><span class="v" id="cg">1800 kcal</span></div>
-    <div class="cs-row"><span class="l">Eaten</span><span class="v" id="cs">0 kcal</span></div>
-    <div class="cs-row"><span class="l">Left</span><span class="v g" id="cr">1800 kcal</span></div>
-  </div>
-</div>
-
-<div class="gbar">
-  <div class="gbar-top"><span>Progress</span><span id="gp">0%</span></div>
-  <div class="gbar-track"><div class="gbar-fill" id="gf" style="width:0%"></div></div>
-</div>
-
-<div class="tabs">
-  <div class="tab active" onclick="sTab('today')">Today</div>
-  <div class="tab" onclick="sTab('browse')">Browse</div>
-  <div class="tab" onclick="sTab('history')">History</div>
-  <div class="tab" onclick="sTab('weight')">Weight</div>
-</div>
-
-<!-- ADD FORM -->
-<div class="add-form" id="af">
-  <div class="search-wrap">
-    <span class="search-icon">🔍</span>
-    <input type="text" id="fn" placeholder="Search Thai food / ค้นหาอาหาร..." autocomplete="off" oninput="onSearch()" onkeydown="onSearchKey(event)">
-    <div class="autocomplete-list" id="acList"></div>
-  </div>
-  <div class="fr">
-    <input type="number" id="fc" placeholder="kcal" inputmode="numeric">
-    <select id="fm">
-      <option value="breakfast">🌅 Breakfast</option>
-      <option value="lunch" selected>☀️ Lunch</option>
-      <option value="dinner">🌙 Dinner</option>
-      <option value="snack">🍵 Snack/Drink</option>
-    </select>
-  </div>
-  <div class="fr">
-    <input type="number" id="fg" placeholder="grams (optional)" inputmode="numeric">
-  </div>
-  <div class="fa">
-    <button class="btn-add" onclick="addFood()">+ Add Entry</button>
-    <button class="btn-cancel" onclick="closeF()">Cancel</button>
-  </div>
-</div>
-
-<!-- TODAY -->
-<div id="tv"><div id="mc"></div></div>
-
-<!-- BROWSE -->
-<div id="bv" style="display:none">
-  <div class="db-section">
-    <div class="db-header">Thai Food Database · <span id="dbCount"></span> items</div>
-    <div class="cat-pills" id="catPills"></div>
-    <div class="search-wrap" style="margin-bottom:10px">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="dbSearch" placeholder="Search / ค้นหา..." oninput="renderDB()"
-        style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px 9px 34px;color:var(--text);font-family:'Noto Sans Thai','DM Mono',monospace;font-size:12px;outline:none;">
+<!-- ── NEW USER SCREEN ────────────────────── -->
+<div id="newUserScreen">
+  <div class="nu-card">
+    <div class="nu-title">Create Profile</div>
+    <div class="nu-field">
+      <div class="nu-label">Your Name</div>
+      <input class="nu-input" id="nuName" placeholder="e.g. Jeep" maxlength="20">
     </div>
-    <div class="db-grid" id="dbGrid"></div>
+    <div class="nu-field">
+      <div class="nu-label">4-digit PIN</div>
+      <div class="pin-setup">
+        <input type="password" maxlength="1" inputmode="numeric" class="pin-setup-input" id="ps1" oninput="pinSetupNav(0)">
+        <input type="password" maxlength="1" inputmode="numeric" class="pin-setup-input" id="ps2" oninput="pinSetupNav(1)">
+        <input type="password" maxlength="1" inputmode="numeric" class="pin-setup-input" id="ps3" oninput="pinSetupNav(2)">
+        <input type="password" maxlength="1" inputmode="numeric" class="pin-setup-input" id="ps4" oninput="pinSetupNav(3)">
+      </div>
+    </div>
+    <div class="nu-field">
+      <div class="nu-label">Calorie Goal</div>
+      <input class="nu-input" id="nuGoal" placeholder="1800" type="number" inputmode="numeric">
+    </div>
+    <div class="nu-field">
+      <div class="nu-label">Avatar</div>
+      <div class="emoji-pick" id="emojiPick"></div>
+    </div>
+    <div class="error-msg" id="nuError"></div>
+    <button class="btn-create" onclick="createUser()">Create Profile</button>
+    <button class="btn-back-login" onclick="showLogin()">← Back</button>
   </div>
 </div>
 
-<!-- HISTORY -->
-<div id="hv" style="display:none"><div id="hc"></div></div>
+<!-- ── MAIN APP ───────────────────────────── -->
+<div id="appScreen">
+  <header>
+    <div class="logo">กินอะไร <span id="headerDate"></span></div>
+    <div class="header-user" onclick="showLogin()">
+      <div class="header-avatar" id="headerAvatar"></div>
+      <div class="header-name" id="headerName"></div>
+    </div>
+  </header>
 
-<!-- WEIGHT -->
-<div class="wt-view" id="wv2">
-  <div class="chart-section">
-    <div class="ct-title">Weight History</div>
-    <canvas id="wc" style="width:100%;height:110px;display:block;"></canvas>
-    <div id="wlist" style="margin-top:12px"></div>
+  <div class="weight-section">
+    <div class="wt-main">
+      <div class="wt-label">Weight Today</div>
+      <div class="wt-value" id="wv">— <span>kg</span></div>
+      <div class="wt-trend" id="wt2"></div>
+    </div>
+    <div class="wt-inputs">
+      <input type="number" id="wi" placeholder="kg" step="0.1" inputmode="decimal">
+      <button class="btn-wt" onclick="logW()">Log</button>
+    </div>
   </div>
-</div>
 
-<button class="fab" id="fab" onclick="togF()">+</button>
+  <div class="cal-section">
+    <div class="ring-wrap">
+      <svg class="ring" viewBox="0 0 80 80">
+        <circle class="rb" cx="40" cy="40" r="32"/>
+        <circle class="rf" id="rf" cx="40" cy="40" r="32" stroke-dasharray="201" stroke-dashoffset="201" stroke="var(--accent)"/>
+      </svg>
+      <div class="ring-center"><div class="rn" id="ce">0</div><div class="rs">kcal</div></div>
+    </div>
+    <div class="cal-stats">
+      <div class="cs-row"><span class="l">Goal</span><span class="v" id="cg">— kcal</span></div>
+      <div class="cs-row"><span class="l">Eaten</span><span class="v" id="cs">0 kcal</span></div>
+      <div class="cs-row"><span class="l">Left</span><span class="v g" id="cr">— kcal</span></div>
+    </div>
+  </div>
+
+  <div class="gbar">
+    <div class="gbar-top"><span>Progress</span><span id="gp">0%</span></div>
+    <div class="gbar-track"><div class="gbar-fill" id="gf" style="width:0%"></div></div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="sTab('today')">Today</div>
+    <div class="tab" onclick="sTab('stats')">Stats</div>
+    <div class="tab" onclick="sTab('browse')">Browse</div>
+    <div class="tab" onclick="sTab('history')">History</div>
+  </div>
+
+  <!-- ADD FORM -->
+  <div class="add-form" id="af">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="fn" placeholder="Search Thai food / ค้นหาอาหาร..." autocomplete="off" oninput="onSearch()" onkeydown="onSearchKey(event)">
+      <div class="autocomplete-list" id="acList"></div>
+    </div>
+    <div class="fr">
+      <input type="number" id="fc" placeholder="kcal" inputmode="numeric">
+      <select id="fm">
+        <option value="breakfast">🌅 Breakfast</option>
+        <option value="lunch" selected>☀️ Lunch</option>
+        <option value="dinner">🌙 Dinner</option>
+        <option value="snack">🍵 Snack</option>
+      </select>
+    </div>
+    <div class="fr">
+      <input type="number" id="fg" placeholder="grams (optional)" inputmode="numeric">
+    </div>
+    <div class="fa">
+      <button class="btn-add" onclick="addFood()">+ Add</button>
+      <button class="btn-cancel" onclick="closeF()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- TODAY -->
+  <div id="tv"><div id="mc"></div></div>
+
+  <!-- STATS -->
+  <div id="sv" style="display:none">
+    <div class="stats-section">
+      <!-- summary cards -->
+      <div class="stat-card">
+        <div class="stat-card-title"><span>This Week</span><span id="weekRange" style="font-size:10px;color:var(--muted)"></span></div>
+        <div class="stat-grid">
+          <div class="stat-item"><div class="si-val" id="stAvgCal">—</div><div class="si-label">Avg kcal/day</div></div>
+          <div class="stat-item"><div class="si-val" id="stDaysLogged">—</div><div class="si-label">Days logged</div></div>
+          <div class="stat-item"><div class="si-val" id="stBestDay">—</div><div class="si-label">Best day (kcal)</div></div>
+          <div class="stat-item"><div class="si-val" id="stStreak">—</div><div class="si-label">Current streak 🔥</div></div>
+        </div>
+      </div>
+      <!-- calorie chart -->
+      <div class="stat-card">
+        <div class="stat-card-title">Calories — Last 14 Days</div>
+        <canvas id="calChart" class="stat-chart" height="120"></canvas>
+      </div>
+      <!-- weight chart -->
+      <div class="stat-card">
+        <div class="stat-card-title">Weight Trend</div>
+        <canvas id="wtChart" class="stat-chart" height="110"></canvas>
+        <div id="wtStatRow" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;"></div>
+      </div>
+      <!-- log streak heatmap -->
+      <div class="stat-card">
+        <div class="stat-card-title">30-Day Log Streak</div>
+        <div class="streak-bar" id="streakBar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BROWSE -->
+  <div id="bv" style="display:none">
+    <div class="db-section">
+      <div class="db-header">Thai Food Database · <span id="dbCount"></span> items</div>
+      <div class="cat-pills" id="catPills"></div>
+      <div class="search-wrap" style="margin-bottom:9px">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="dbSearch" placeholder="Search / ค้นหา..." oninput="renderDB()"
+          style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px 8px 32px;color:var(--text);font-family:'Noto Sans Thai','DM Mono',monospace;font-size:12px;outline:none;">
+      </div>
+      <div class="db-grid" id="dbGrid"></div>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div id="hv" style="display:none"><div id="hc"></div></div>
+
+  <button class="fab" id="fab" onclick="togF()">+</button>
+</div>
 
 <script>
-// ── THAI FOOD DATABASE ───────────────────────────
+// ══ FOOD DATABASE ═══════════════════════════════
 const DB=[
   {name:"Khao Pad (Fried Rice)",th:"ข้าวผัด",cal:450,cat:"rice",icon:"🍳",serving:"1 plate"},
-  {name:"Khao Pad Moo (Pork Fried Rice)",th:"ข้าวผัดหมู",cal:480,cat:"rice",icon:"🍳",serving:"1 plate"},
-  {name:"Khao Pad Kai (Chicken Fried Rice)",th:"ข้าวผัดไก่",cal:460,cat:"rice",icon:"🍳",serving:"1 plate"},
-  {name:"Khao Pad Goong (Shrimp Fried Rice)",th:"ข้าวผัดกุ้ง",cal:440,cat:"rice",icon:"🍳",serving:"1 plate"},
-  {name:"Khao Pad Sapparod (Pineapple Fried Rice)",th:"ข้าวผัดสับปะรด",cal:490,cat:"rice",icon:"🍍",serving:"1 plate"},
-  {name:"Khao Mun Gai (Chicken Rice)",th:"ข้าวมันไก่",cal:520,cat:"rice",icon:"🍚",serving:"1 plate"},
-  {name:"Khao Na Pet (Duck on Rice)",th:"ข้าวหน้าเป็ด",cal:560,cat:"rice",icon:"🦆",serving:"1 plate"},
-  {name:"Khao Kha Moo (Braised Pork Leg Rice)",th:"ข้าวขาหมู",cal:620,cat:"rice",icon:"🍖",serving:"1 plate"},
-  {name:"Khao Tom (Rice Soup)",th:"ข้าวต้ม",cal:200,cat:"rice",icon:"🍲",serving:"1 bowl"},
-  {name:"Khao Niaw (Sticky Rice)",th:"ข้าวเหนียว",cal:160,cat:"rice",icon:"🍚",serving:"100g"},
-  {name:"Khao Suay (Steamed Rice)",th:"ข้าวสวย",cal:130,cat:"rice",icon:"🍚",serving:"100g"},
-  {name:"Khao Kluk Kapi (Shrimp Paste Rice)",th:"ข้าวคลุกกะปิ",cal:480,cat:"rice",icon:"🦐",serving:"1 plate"},
+  {name:"Khao Pad Moo",th:"ข้าวผัดหมู",cal:480,cat:"rice",icon:"🍳",serving:"1 plate"},
+  {name:"Khao Pad Kai",th:"ข้าวผัดไก่",cal:460,cat:"rice",icon:"🍳",serving:"1 plate"},
+  {name:"Khao Pad Goong",th:"ข้าวผัดกุ้ง",cal:440,cat:"rice",icon:"🍳",serving:"1 plate"},
+  {name:"Khao Mun Gai",th:"ข้าวมันไก่",cal:520,cat:"rice",icon:"🍚",serving:"1 plate"},
+  {name:"Khao Na Pet",th:"ข้าวหน้าเป็ด",cal:560,cat:"rice",icon:"🦆",serving:"1 plate"},
+  {name:"Khao Kha Moo",th:"ข้าวขาหมู",cal:620,cat:"rice",icon:"🍖",serving:"1 plate"},
+  {name:"Khao Tom",th:"ข้าวต้ม",cal:200,cat:"rice",icon:"🍲",serving:"1 bowl"},
+  {name:"Khao Niaw",th:"ข้าวเหนียว",cal:160,cat:"rice",icon:"🍚",serving:"100g"},
+  {name:"Khao Suay",th:"ข้าวสวย",cal:130,cat:"rice",icon:"🍚",serving:"100g"},
   {name:"Pad Thai",th:"ผัดไทย",cal:490,cat:"noodles",icon:"🍜",serving:"1 plate"},
-  {name:"Pad Thai Goong (with Shrimp)",th:"ผัดไทยกุ้ง",cal:510,cat:"noodles",icon:"🦐",serving:"1 plate"},
+  {name:"Pad Thai Goong",th:"ผัดไทยกุ้ง",cal:510,cat:"noodles",icon:"🦐",serving:"1 plate"},
   {name:"Pad See Ew",th:"ผัดซีอิ๊ว",cal:520,cat:"noodles",icon:"🍜",serving:"1 plate"},
-  {name:"Pad Kee Mao (Drunken Noodles)",th:"ผัดขี้เมา",cal:500,cat:"noodles",icon:"🌶️",serving:"1 plate"},
-  {name:"Guay Teow (Noodle Soup)",th:"ก๋วยเตี๋ยว",cal:350,cat:"noodles",icon:"🍜",serving:"1 bowl"},
-  {name:"Guay Teow Nuea (Beef Noodle)",th:"ก๋วยเตี๋ยวเนื้อ",cal:420,cat:"noodles",icon:"🥩",serving:"1 bowl"},
-  {name:"Rad Na (Noodles with Gravy)",th:"ราดหน้า",cal:480,cat:"noodles",icon:"🍜",serving:"1 plate"},
-  {name:"Bamee (Egg Noodles BBQ Pork)",th:"บะหมี่",cal:420,cat:"noodles",icon:"🍜",serving:"1 bowl"},
+  {name:"Pad Kee Mao",th:"ผัดขี้เมา",cal:500,cat:"noodles",icon:"🌶️",serving:"1 plate"},
+  {name:"Guay Teow",th:"ก๋วยเตี๋ยว",cal:350,cat:"noodles",icon:"🍜",serving:"1 bowl"},
+  {name:"Guay Teow Nuea",th:"ก๋วยเตี๋ยวเนื้อ",cal:420,cat:"noodles",icon:"🥩",serving:"1 bowl"},
+  {name:"Rad Na",th:"ราดหน้า",cal:480,cat:"noodles",icon:"🍜",serving:"1 plate"},
+  {name:"Bamee",th:"บะหมี่",cal:420,cat:"noodles",icon:"🍜",serving:"1 bowl"},
   {name:"Khao Soi",th:"ข้าวซอย",cal:600,cat:"noodles",icon:"🍛",serving:"1 bowl"},
-  {name:"Guay Chap",th:"กวยจั๊บ",cal:400,cat:"noodles",icon:"🍜",serving:"1 bowl"},
-  {name:"Green Curry (Gaeng Keow Wan)",th:"แกงเขียวหวาน",cal:380,cat:"curry",icon:"🍛",serving:"1 bowl"},
-  {name:"Red Curry (Gaeng Daeng)",th:"แกงแดง",cal:360,cat:"curry",icon:"🍛",serving:"1 bowl"},
+  {name:"Green Curry",th:"แกงเขียวหวาน",cal:380,cat:"curry",icon:"🍛",serving:"1 bowl"},
+  {name:"Red Curry",th:"แกงแดง",cal:360,cat:"curry",icon:"🍛",serving:"1 bowl"},
   {name:"Massaman Curry",th:"แกงมัสมั่น",cal:420,cat:"curry",icon:"🍛",serving:"1 bowl"},
   {name:"Panang Curry",th:"พะแนง",cal:390,cat:"curry",icon:"🍛",serving:"1 bowl"},
-  {name:"Yellow Curry (Gaeng Kari)",th:"แกงกะหรี่",cal:370,cat:"curry",icon:"🍛",serving:"1 bowl"},
-  {name:"Gaeng Om (Isan Herbal Curry)",th:"แกงอ่อม",cal:180,cat:"curry",icon:"🌿",serving:"1 bowl"},
+  {name:"Yellow Curry",th:"แกงกะหรี่",cal:370,cat:"curry",icon:"🍛",serving:"1 bowl"},
   {name:"Tom Yam Goong",th:"ต้มยำกุ้ง",cal:220,cat:"soup",icon:"🦐",serving:"1 bowl"},
   {name:"Tom Kha Gai",th:"ต้มข่าไก่",cal:280,cat:"soup",icon:"🍲",serving:"1 bowl"},
-  {name:"Tom Saap (Isan Spicy Soup)",th:"ต้มแซ่บ",cal:200,cat:"soup",icon:"🌶️",serving:"1 bowl"},
-  {name:"Gaeng Liang (Vegetable Soup)",th:"แกงเลียง",cal:120,cat:"soup",icon:"🥦",serving:"1 bowl"},
-  {name:"Gaeng Jued (Clear Soup)",th:"แกงจืด",cal:100,cat:"soup",icon:"🍲",serving:"1 bowl"},
-  {name:"Pad Krapao Moo (Pork Basil)",th:"ผัดกระเพราหมู",cal:420,cat:"stirfry",icon:"🌿",serving:"1 plate"},
-  {name:"Pad Krapao Kai (Chicken Basil)",th:"ผัดกระเพราไก่",cal:400,cat:"stirfry",icon:"🐓",serving:"1 plate"},
-  {name:"Pad Krapao Kai + Egg",th:"ผัดกระเพราไข่ดาว",cal:530,cat:"stirfry",icon:"🍳",serving:"1 plate"},
-  {name:"Pad Krapao Nuea (Beef Basil)",th:"ผัดกระเพราเนื้อ",cal:450,cat:"stirfry",icon:"🥩",serving:"1 plate"},
-  {name:"Pad Pak Boong (Morning Glory)",th:"ผัดผักบุ้ง",cal:160,cat:"stirfry",icon:"🌿",serving:"1 plate"},
-  {name:"Pad Pak Ruam (Mixed Veg)",th:"ผัดผักรวม",cal:180,cat:"stirfry",icon:"🥦",serving:"1 plate"},
-  {name:"Pad Woon Sen (Glass Noodles)",th:"ผัดวุ้นเส้น",cal:320,cat:"stirfry",icon:"🍜",serving:"1 plate"},
+  {name:"Tom Saap",th:"ต้มแซ่บ",cal:200,cat:"soup",icon:"🌶️",serving:"1 bowl"},
+  {name:"Gaeng Liang",th:"แกงเลียง",cal:120,cat:"soup",icon:"🥦",serving:"1 bowl"},
+  {name:"Gaeng Jued",th:"แกงจืด",cal:100,cat:"soup",icon:"🍲",serving:"1 bowl"},
+  {name:"Pad Krapao Moo",th:"ผัดกระเพราหมู",cal:420,cat:"stirfry",icon:"🌿",serving:"1 plate"},
+  {name:"Pad Krapao Kai",th:"ผัดกระเพราไก่",cal:400,cat:"stirfry",icon:"🐓",serving:"1 plate"},
+  {name:"Pad Krapao + Egg",th:"ผัดกระเพราไข่ดาว",cal:530,cat:"stirfry",icon:"🍳",serving:"1 plate"},
+  {name:"Pad Krapao Nuea",th:"ผัดกระเพราเนื้อ",cal:450,cat:"stirfry",icon:"🥩",serving:"1 plate"},
+  {name:"Pad Pak Boong",th:"ผัดผักบุ้ง",cal:160,cat:"stirfry",icon:"🌿",serving:"1 plate"},
+  {name:"Pad Pak Ruam",th:"ผัดผักรวม",cal:180,cat:"stirfry",icon:"🥦",serving:"1 plate"},
+  {name:"Pad Woon Sen",th:"ผัดวุ้นเส้น",cal:320,cat:"stirfry",icon:"🍜",serving:"1 plate"},
   {name:"Pad Cashew Chicken",th:"ไก่ผัดเม็ดมะม่วง",cal:440,cat:"stirfry",icon:"🥜",serving:"1 plate"},
-  {name:"Pad Prik King",th:"ผัดพริกขิง",cal:380,cat:"stirfry",icon:"🌶️",serving:"1 plate"},
-  {name:"Som Tam Thai (Papaya Salad)",th:"ส้มตำไทย",cal:160,cat:"isan",icon:"🥗",serving:"1 plate"},
-  {name:"Som Tam Poo (with Crab)",th:"ส้มตำปู",cal:140,cat:"isan",icon:"🦀",serving:"1 plate"},
-  {name:"Som Tam Pla Ra (Isan Style)",th:"ส้มตำปลาร้า",cal:150,cat:"isan",icon:"🥗",serving:"1 plate"},
-  {name:"Larb Moo (Pork Larb)",th:"ลาบหมู",cal:280,cat:"isan",icon:"🌿",serving:"1 plate"},
-  {name:"Larb Kai (Chicken Larb)",th:"ลาบไก่",cal:260,cat:"isan",icon:"🐓",serving:"1 plate"},
-  {name:"Nam Tok Moo (Pork Waterfall)",th:"น้ำตกหมู",cal:290,cat:"isan",icon:"🌿",serving:"1 plate"},
-  {name:"Gai Yang (Grilled Chicken)",th:"ไก่ย่าง",cal:300,cat:"isan",icon:"🍗",serving:"1 piece"},
-  {name:"Sai Krok Isan (Fermented Sausage)",th:"ไส้กรอกอีสาน",cal:260,cat:"isan",icon:"🌭",serving:"2 pieces"},
-  {name:"Moo Ping (Pork Skewer)",th:"หมูปิ้ง",cal:180,cat:"isan",icon:"🍢",serving:"2 sticks"},
+  {name:"Som Tam Thai",th:"ส้มตำไทย",cal:160,cat:"isan",icon:"🥗",serving:"1 plate"},
+  {name:"Som Tam Poo",th:"ส้มตำปู",cal:140,cat:"isan",icon:"🦀",serving:"1 plate"},
+  {name:"Som Tam Pla Ra",th:"ส้มตำปลาร้า",cal:150,cat:"isan",icon:"🥗",serving:"1 plate"},
+  {name:"Larb Moo",th:"ลาบหมู",cal:280,cat:"isan",icon:"🌿",serving:"1 plate"},
+  {name:"Larb Kai",th:"ลาบไก่",cal:260,cat:"isan",icon:"🐓",serving:"1 plate"},
+  {name:"Nam Tok Moo",th:"น้ำตกหมู",cal:290,cat:"isan",icon:"🌿",serving:"1 plate"},
+  {name:"Gai Yang",th:"ไก่ย่าง",cal:300,cat:"isan",icon:"🍗",serving:"1 piece"},
+  {name:"Sai Krok Isan",th:"ไส้กรอกอีสาน",cal:260,cat:"isan",icon:"🌭",serving:"2 pieces"},
+  {name:"Moo Ping",th:"หมูปิ้ง",cal:180,cat:"isan",icon:"🍢",serving:"2 sticks"},
   {name:"Mango Sticky Rice",th:"ข้าวเหนียวมะม่วง",cal:380,cat:"isan",icon:"🥭",serving:"1 plate"},
-  {name:"Gaeng Khanun (Jackfruit Curry)",th:"แกงขนุน",cal:240,cat:"isan",icon:"🍃",serving:"1 bowl"},
-  {name:"Moo Grob (Crispy Pork)",th:"หมูกรอบ",cal:420,cat:"grilled",icon:"🐷",serving:"100g"},
-  {name:"Satay Skewers",th:"สะเต๊ะ",cal:220,cat:"grilled",icon:"🍢",serving:"4 sticks"},
-  {name:"Pla Pao (Grilled Salt Fish)",th:"ปลาเผา",cal:280,cat:"grilled",icon:"🐟",serving:"1 fish"},
-  {name:"Gai Tod (Fried Chicken)",th:"ไก่ทอด",cal:340,cat:"grilled",icon:"🍗",serving:"1 piece"},
-  {name:"Moo Tod (Fried Pork)",th:"หมูทอด",cal:360,cat:"grilled",icon:"🥩",serving:"100g"},
-  {name:"Nuea Yang (Grilled Beef)",th:"เนื้อย่าง",cal:300,cat:"grilled",icon:"🥩",serving:"100g"},
-  {name:"Ped Yang (Roast Duck)",th:"เป็ดย่าง",cal:380,cat:"grilled",icon:"🦆",serving:"100g"},
-  {name:"Khanom Buang (Thai Crepe)",th:"ขนมเบื้อง",cal:180,cat:"snack",icon:"🥞",serving:"3 pcs"},
-  {name:"Khanom Krok (Coconut Pancake)",th:"ขนมครก",cal:200,cat:"snack",icon:"🥞",serving:"6 pcs"},
+  {name:"Moo Grob",th:"หมูกรอบ",cal:420,cat:"grilled",icon:"🐷",serving:"100g"},
+  {name:"Satay",th:"สะเต๊ะ",cal:220,cat:"grilled",icon:"🍢",serving:"4 sticks"},
+  {name:"Pla Pao",th:"ปลาเผา",cal:280,cat:"grilled",icon:"🐟",serving:"1 fish"},
+  {name:"Gai Tod",th:"ไก่ทอด",cal:340,cat:"grilled",icon:"🍗",serving:"1 piece"},
+  {name:"Moo Tod",th:"หมูทอด",cal:360,cat:"grilled",icon:"🥩",serving:"100g"},
+  {name:"Khanom Krok",th:"ขนมครก",cal:200,cat:"snack",icon:"🥞",serving:"6 pcs"},
   {name:"Roti",th:"โรตี",cal:280,cat:"snack",icon:"🫓",serving:"1 piece"},
-  {name:"Tod Mun Pla (Fish Cake)",th:"ทอดมันปลา",cal:240,cat:"snack",icon:"🐟",serving:"5 pcs"},
-  {name:"Por Pia Tod (Spring Roll)",th:"ปอเปี๊ยะทอด",cal:220,cat:"snack",icon:"🥢",serving:"3 rolls"},
-  {name:"Hoi Tod (Oyster Omelette)",th:"หอยทอด",cal:380,cat:"snack",icon:"🦪",serving:"1 plate"},
-  {name:"Tao Hu Tod (Fried Tofu)",th:"เต้าหู้ทอด",cal:180,cat:"snack",icon:"🧊",serving:"6 pcs"},
-  {name:"Pa Thong Ko (Thai Doughnut)",th:"ปาท่องโก๋",cal:220,cat:"breakfast",icon:"🥐",serving:"2 pcs"},
-  {name:"Kai Jiaw (Thai Omelette)",th:"ไข่เจียว",cal:280,cat:"breakfast",icon:"🍳",serving:"1 omelette"},
-  {name:"Kai Dao (Fried Egg)",th:"ไข่ดาว",cal:100,cat:"breakfast",icon:"🍳",serving:"1 egg"},
-  {name:"Jok (Rice Congee)",th:"โจ๊ก",cal:200,cat:"breakfast",icon:"🍲",serving:"1 bowl"},
-  {name:"Khanom Pang Pao (Grilled Toast)",th:"ขนมปังปิ้ง",cal:200,cat:"breakfast",icon:"🍞",serving:"2 slices"},
-  {name:"Yam Woon Sen (Glass Noodle Salad)",th:"ยำวุ้นเส้น",cal:200,cat:"salad",icon:"🥗",serving:"1 plate"},
-  {name:"Yam Talay (Seafood Salad)",th:"ยำทะเล",cal:220,cat:"salad",icon:"🦞",serving:"1 plate"},
-  {name:"Yam Nuea Yang (Grilled Beef Salad)",th:"ยำเนื้อย่าง",cal:280,cat:"salad",icon:"🥗",serving:"1 plate"},
-  {name:"Pla Goong (Shrimp Salad)",th:"พล่ากุ้ง",cal:180,cat:"salad",icon:"🦐",serving:"1 plate"},
-  {name:"Pla Nueng Manao (Steamed Fish)",th:"ปลานึ่งมะนาว",cal:220,cat:"seafood",icon:"🐟",serving:"1 fish"},
-  {name:"Pla Tod (Fried Fish)",th:"ปลาทอด",cal:300,cat:"seafood",icon:"🐟",serving:"1 fish"},
+  {name:"Tod Mun Pla",th:"ทอดมันปลา",cal:240,cat:"snack",icon:"🐟",serving:"5 pcs"},
+  {name:"Por Pia Tod",th:"ปอเปี๊ยะทอด",cal:220,cat:"snack",icon:"🥢",serving:"3 rolls"},
+  {name:"Hoi Tod",th:"หอยทอด",cal:380,cat:"snack",icon:"🦪",serving:"1 plate"},
+  {name:"Pa Thong Ko",th:"ปาท่องโก๋",cal:220,cat:"breakfast",icon:"🥐",serving:"2 pcs"},
+  {name:"Kai Jiaw",th:"ไข่เจียว",cal:280,cat:"breakfast",icon:"🍳",serving:"1 omelette"},
+  {name:"Kai Dao",th:"ไข่ดาว",cal:100,cat:"breakfast",icon:"🍳",serving:"1 egg"},
+  {name:"Jok",th:"โจ๊ก",cal:200,cat:"breakfast",icon:"🍲",serving:"1 bowl"},
+  {name:"Khanom Pang Pao",th:"ขนมปังปิ้ง",cal:200,cat:"breakfast",icon:"🍞",serving:"2 slices"},
+  {name:"Yam Woon Sen",th:"ยำวุ้นเส้น",cal:200,cat:"salad",icon:"🥗",serving:"1 plate"},
+  {name:"Yam Talay",th:"ยำทะเล",cal:220,cat:"salad",icon:"🦞",serving:"1 plate"},
+  {name:"Pla Goong",th:"พล่ากุ้ง",cal:180,cat:"salad",icon:"🦐",serving:"1 plate"},
+  {name:"Pla Nueng Manao",th:"ปลานึ่งมะนาว",cal:220,cat:"seafood",icon:"🐟",serving:"1 fish"},
   {name:"Goong Pad Nam Prik Pao",th:"กุ้งผัดน้ำพริกเผา",cal:280,cat:"seafood",icon:"🦐",serving:"1 plate"},
-  {name:"Pla Muk Yang (Grilled Squid)",th:"ปลาหมึกย่าง",cal:200,cat:"seafood",icon:"🦑",serving:"1 portion"},
-  {name:"Pu Nim Tod (Soft Shell Crab)",th:"ปูนิ่มทอด",cal:320,cat:"seafood",icon:"🦀",serving:"1 crab"},
-  {name:"Lod Chong (Pandan Coconut)",th:"ลอดช่อง",cal:220,cat:"dessert",icon:"🍵",serving:"1 cup"},
-  {name:"Kluay Buat Chee (Banana Coconut)",th:"กล้วยบวชชี",cal:200,cat:"dessert",icon:"🍌",serving:"1 bowl"},
+  {name:"Pla Muk Yang",th:"ปลาหมึกย่าง",cal:200,cat:"seafood",icon:"🦑",serving:"1 portion"},
+  {name:"Lod Chong",th:"ลอดช่อง",cal:220,cat:"dessert",icon:"🍵",serving:"1 cup"},
+  {name:"Kluay Kaek",th:"กล้วยแขก",cal:180,cat:"dessert",icon:"🍌",serving:"2 pcs"},
   {name:"Tub Tim Krob",th:"ทับทิมกรอบ",cal:180,cat:"dessert",icon:"🍧",serving:"1 cup"},
-  {name:"Kluay Kaek (Fried Banana)",th:"กล้วยแขก",cal:180,cat:"dessert",icon:"🍌",serving:"2 pcs"},
-  {name:"Coconut Ice Cream",th:"ไอศกรีมกะทิ",cal:220,cat:"dessert",icon:"🍦",serving:"1 scoop"},
-  {name:"Cha Yen (Thai Iced Tea)",th:"ชาเย็น",cal:180,cat:"drinks",icon:"🧋",serving:"1 glass"},
-  {name:"Cha Nom Yen (Thai Milk Tea)",th:"ชานมเย็น",cal:200,cat:"drinks",icon:"🧋",serving:"1 glass"},
-  {name:"Oliang (Thai Iced Coffee)",th:"โอเลี้ยง",cal:80,cat:"drinks",icon:"☕",serving:"1 glass"},
-  {name:"Kafae Boran (Traditional Coffee)",th:"กาแฟโบราณ",cal:120,cat:"drinks",icon:"☕",serving:"1 glass"},
-  {name:"Nam Manao (Lime Juice)",th:"น้ำมะนาว",cal:50,cat:"drinks",icon:"🍋",serving:"1 glass"},
+  {name:"Cha Yen",th:"ชาเย็น",cal:180,cat:"drinks",icon:"🧋",serving:"1 glass"},
+  {name:"Cha Nom Yen",th:"ชานมเย็น",cal:200,cat:"drinks",icon:"🧋",serving:"1 glass"},
+  {name:"Oliang",th:"โอเลี้ยง",cal:80,cat:"drinks",icon:"☕",serving:"1 glass"},
+  {name:"Kafae Boran",th:"กาแฟโบราณ",cal:120,cat:"drinks",icon:"☕",serving:"1 glass"},
+  {name:"Nam Manao",th:"น้ำมะนาว",cal:50,cat:"drinks",icon:"🍋",serving:"1 glass"},
   {name:"Coconut Water",th:"น้ำมะพร้าว",cal:60,cat:"drinks",icon:"🥥",serving:"1 coconut"},
-  {name:"Nam Khing (Ginger Drink)",th:"น้ำขิง",cal:80,cat:"drinks",icon:"🍵",serving:"1 glass"},
-  {name:"Nom Yen (Pink Milk)",th:"นมเย็น",cal:160,cat:"drinks",icon:"🥛",serving:"1 glass"},
+  {name:"Nom Yen",th:"นมเย็น",cal:160,cat:"drinks",icon:"🥛",serving:"1 glass"},
   {name:"Beer Chang",th:"เบียร์ช้าง",cal:150,cat:"drinks",icon:"🍺",serving:"320ml"},
   {name:"Beer Singha",th:"เบียร์สิงห์",cal:148,cat:"drinks",icon:"🍺",serving:"320ml"},
-  {name:"Thai Rum (Ruang Khao)",th:"เหล้าขาว",cal:100,cat:"drinks",icon:"🥃",serving:"30ml"},
 ];
 
 const CATS=[
@@ -380,50 +506,133 @@ const CATS=[
   {id:'dessert',label:'Sweets 🍮'},{id:'drinks',label:'Drinks 🧋'},
 ];
 
-// ── STATE ───────────────────────────────────────
-const GOAL=1800;
-let S=JSON.parse(localStorage.getItem('kinaarai_v1')||'null')||{weights:[],logs:[]};
-const save=()=>localStorage.setItem('kinaarai_v1',JSON.stringify(S));
+const EMOJIS=['😊','🏃','💪','🌸','🔥','⭐','🦋','🌿','🍀','🎯'];
+
+// ══ USER MANAGEMENT ══════════════════════════════
+const STORE_KEY='kinaarai_users_v2';
+let users=JSON.parse(localStorage.getItem(STORE_KEY)||'{}');
+// users = { username: { pin, emoji, goal, weights:[], logs:[] } }
+let currentUser=null;
+let pinBuffer='';
+
+const saveUsers=()=>localStorage.setItem(STORE_KEY,JSON.stringify(users));
 const tod=()=>new Date().toISOString().slice(0,10);
-const FICONS={breakfast:['🥣','🍳','🥞'],lunch:['🍚','🥗','🍜'],dinner:['🍲','🫕','🥘'],snack:['🍵','🧃','🍌']};
+const U=()=>users[currentUser];
+const FICONS={breakfast:['🥣','🍳'],lunch:['🍚','🍜'],dinner:['🍲','🥘'],snack:['🍵','🍌']};
 const autoIcon=m=>FICONS[m][Math.floor(Math.random()*FICONS[m].length)];
-const ML={breakfast:'🌅 Breakfast',lunch:'☀️ Lunch',dinner:'🌙 Dinner',snack:'🍵 Snacks & Drinks'};
+const ML={breakfast:'🌅 Breakfast',lunch:'☀️ Lunch',dinner:'🌙 Dinner',snack:'🍵 Snacks'};
 let acSel=-1,activeCat='all';
 
-// ── PWA ─────────────────────────────────────────
-let deferredPrompt=null;
-window.addEventListener('beforeinstallprompt',e=>{
-  e.preventDefault();deferredPrompt=e;
-  if(!localStorage.getItem('install_dismissed'))
-    document.getElementById('installBanner').classList.add('show');
-});
-document.getElementById('btnInstall').addEventListener('click',async()=>{
-  if(!deferredPrompt)return;
-  deferredPrompt.prompt();
-  const{outcome}=await deferredPrompt.userChoice;
-  if(outcome==='accepted')document.getElementById('installBanner').classList.remove('show');
-  deferredPrompt=null;
-});
-function dismissInstall(){
-  document.getElementById('installBanner').classList.remove('show');
-  localStorage.setItem('install_dismissed','1');
+// ══ SCREENS ══════════════════════════════════════
+function showLogin(){
+  currentUser=null;
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('pinScreen').style.display='none';
+  document.getElementById('newUserScreen').style.display='none';
+  document.getElementById('appScreen').style.display='none';
+  renderUserList();
 }
-window.addEventListener('online',()=>document.getElementById('offlineBadge').classList.remove('show'));
-window.addEventListener('offline',()=>document.getElementById('offlineBadge').classList.add('show'));
-if(!navigator.onLine)document.getElementById('offlineBadge').classList.add('show');
-if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 
-// ── INIT ────────────────────────────────────────
-function init(){
+function renderUserList(){
+  const ul=document.getElementById('userList');
+  const names=Object.keys(users);
+  if(!names.length){ul.innerHTML='<div style="text-align:center;color:var(--muted);font-size:12px;padding:8px">No profiles yet</div>';return;}
+  ul.innerHTML=names.map(n=>{
+    const u=users[n];
+    const lastLog=u.logs.length?u.logs[u.logs.length-1].date:'Never';
+    return `<div class="user-btn" onclick="selectUser('${n}')">
+      <div class="user-avatar">${u.emoji||'😊'}</div>
+      <div class="user-info">
+        <div class="user-name">${n}</div>
+        <div class="user-meta">Last log: ${lastLog} · Goal: ${u.goal||1800} kcal</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function selectUser(name){
+  currentUser=name;pinBuffer='';
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('pinScreen').style.display='flex';
+  document.getElementById('pinUsername').textContent=name;
+  updatePinDots();
+}
+
+function pinKey(k){
+  if(pinBuffer.length>=4)return;
+  pinBuffer+=k;updatePinDots();
+  if(pinBuffer.length===4)setTimeout(checkPin,150);
+}
+function pinDel(){pinBuffer=pinBuffer.slice(0,-1);updatePinDots();}
+function updatePinDots(){
+  document.querySelectorAll('.pin-dot').forEach((d,i)=>{
+    d.className='pin-dot'+(i<pinBuffer.length?' filled':'');
+  });
+}
+function checkPin(){
+  const u=users[currentUser];
+  if(pinBuffer===u.pin){
+    document.getElementById('pinScreen').style.display='none';
+    document.getElementById('appScreen').style.display='block';
+    initApp();
+  } else {
+    document.querySelectorAll('.pin-dot').forEach(d=>d.className='pin-dot error');
+    setTimeout(()=>{pinBuffer='';updatePinDots();},700);
+  }
+}
+
+function showNewUser(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('newUserScreen').style.display='flex';
+  document.getElementById('nuError').textContent='';
+  document.getElementById('nuName').value='';
+  document.getElementById('nuGoal').value='';
+  ['ps1','ps2','ps3','ps4'].forEach(id=>document.getElementById(id).value='');
+  // build emoji picker
+  document.getElementById('emojiPick').innerHTML=EMOJIS.map((e,i)=>`<div class="emoji-opt${i===0?' active':''}" onclick="pickEmoji(this,'${e}')">${e}</div>`).join('');
+  document.getElementById('nuName').focus();
+}
+function pickEmoji(el,e){
+  document.querySelectorAll('.emoji-opt').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+}
+function pinSetupNav(i){
+  const ids=['ps1','ps2','ps3','ps4'];
+  const v=document.getElementById(ids[i]).value;
+  if(v&&i<3)document.getElementById(ids[i+1]).focus();
+}
+function createUser(){
+  const name=document.getElementById('nuName').value.trim();
+  const pin=['ps1','ps2','ps3','ps4'].map(id=>document.getElementById(id).value).join('');
+  const goal=parseInt(document.getElementById('nuGoal').value)||1800;
+  const emoji=document.querySelector('.emoji-opt.active')?.textContent||'😊';
+  const err=document.getElementById('nuError');
+  if(!name){err.textContent='Please enter a name';return;}
+  if(users[name]){err.textContent='Name already taken';return;}
+  if(pin.length!==4||!/^\d{4}$/.test(pin)){err.textContent='Please enter a 4-digit PIN';return;}
+  users[name]={pin,emoji,goal,weights:[],logs:[]};
+  saveUsers();
+  currentUser=name;
+  document.getElementById('newUserScreen').style.display='none';
+  document.getElementById('appScreen').style.display='block';
+  initApp();
+}
+
+// ══ APP INIT ══════════════════════════════════════
+function initApp(){
   const d=new Date();
-  document.getElementById('dd').textContent=d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('headerDate').textContent=d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+  document.getElementById('headerAvatar').textContent=U().emoji||'😊';
+  document.getElementById('headerName').textContent=currentUser;
   document.getElementById('dbCount').textContent=DB.length;
-  buildCatPills();rW();rCal();rMeals();
+  buildCatPills();
+  rW();rCal();rMeals();
+  sTab('today');
 }
 
-// ── WEIGHT ──────────────────────────────────────
+// ══ WEIGHT ════════════════════════════════════════
 function rW(){
-  const ws=S.weights;
+  const ws=U().weights;
   if(!ws.length){document.getElementById('wv').innerHTML='— <span>kg</span>';document.getElementById('wt2').textContent='No data';return;}
   const cur=ws[ws.length-1].value;
   document.getElementById('wv').innerHTML=`${cur.toFixed(1)} <span>kg</span>`;
@@ -438,36 +647,37 @@ function rW(){
 function logW(){
   const v=parseFloat(document.getElementById('wi').value);
   if(!v||v<20||v>300)return;
-  S.weights.push({date:tod(),value:v});
+  U().weights.push({date:tod(),value:v});
   document.getElementById('wi').value='';
-  save();rW();
-  if(document.getElementById('wv2').style.display!=='none')rWChart();
+  saveUsers();rW();
 }
 
-// ── CALORIES ────────────────────────────────────
+// ══ CALORIES ══════════════════════════════════════
 function rCal(){
-  const logs=S.logs.filter(l=>l.date===tod());
+  const goal=U().goal||1800;
+  const logs=U().logs.filter(l=>l.date===tod());
   const eaten=logs.reduce((s,l)=>s+l.cal,0);
-  const rem=Math.max(0,GOAL-eaten);
-  const pct=Math.min(1,eaten/GOAL);
+  const rem=Math.max(0,goal-eaten);
+  const pct=Math.min(1,eaten/goal);
   document.getElementById('ce').textContent=eaten;
   document.getElementById('cs').textContent=eaten+' kcal';
+  document.getElementById('cg').textContent=goal+' kcal';
   document.getElementById('cr').textContent=rem+' kcal';
-  document.getElementById('cr').className='v '+(eaten>GOAL?'r':'g');
-  document.getElementById('rf').style.strokeDashoffset=213.6-(213.6*pct);
-  document.getElementById('rf').style.stroke=eaten>GOAL?'var(--red)':'var(--accent)';
+  document.getElementById('cr').className='v '+(eaten>goal?'r':'g');
+  document.getElementById('rf').style.strokeDashoffset=201-(201*pct);
+  document.getElementById('rf').style.stroke=eaten>goal?'var(--red)':'var(--accent)';
   const p=Math.round(pct*100);
   document.getElementById('gp').textContent=p+'%';
   const f=document.getElementById('gf');
   f.style.width=p+'%';
-  f.style.background=eaten>GOAL?'var(--red)':p>80?'var(--yellow)':'var(--accent)';
+  f.style.background=eaten>goal?'var(--red)':p>80?'var(--yellow)':'var(--accent)';
 }
 
-// ── MEALS ───────────────────────────────────────
+// ══ MEALS ══════════════════════════════════════════
 function rMeals(){
-  const logs=S.logs.filter(l=>l.date===tod());
+  const logs=U().logs.filter(l=>l.date===tod());
   const mc=document.getElementById('mc');
-  if(!logs.length){mc.innerHTML='<div class="empty"><div class="big">🍽</div>Nothing logged yet.<br>Tap + to add a meal.</div>';return;}
+  if(!logs.length){mc.innerHTML='<div class="empty"><div class="big">🍽</div>Nothing logged yet.<br>Tap + to add.</div>';return;}
   let h='';
   for(const m of['breakfast','lunch','dinner','snack']){
     const items=logs.filter(l=>l.meal===m);if(!items.length)continue;
@@ -478,9 +688,9 @@ function rMeals(){
   }
   mc.innerHTML=h;
 }
-function del(id){S.logs=S.logs.filter(l=>l.id!==id);save();rCal();rMeals();}
+function del(id){U().logs=U().logs.filter(l=>l.id!==id);saveUsers();rCal();rMeals();}
 
-// ── AUTOCOMPLETE ────────────────────────────────
+// ══ AUTOCOMPLETE ══════════════════════════════════
 function onSearch(){
   const q=document.getElementById('fn').value.trim().toLowerCase();
   const list=document.getElementById('acList');acSel=-1;
@@ -511,7 +721,6 @@ function selectAC(i){
 }
 document.addEventListener('click',e=>{if(!e.target.closest('.search-wrap'))document.getElementById('acList').classList.remove('open');});
 
-// ── ADD FOOD ────────────────────────────────────
 function togF(){
   const f=document.getElementById('af');
   const open=f.classList.toggle('open');
@@ -524,13 +733,147 @@ function addFood(){
   const name=el.value.trim();const cal=parseInt(document.getElementById('fc').value);
   const meal=document.getElementById('fm').value;const grams=document.getElementById('fg').value;
   if(!name||!cal)return;
-  S.logs.push({id:Date.now().toString(),date:tod(),meal,name,th:el.dataset.th||'',cal,grams:grams?parseInt(grams):null,icon:el.dataset.icon||autoIcon(meal)});
+  U().logs.push({id:Date.now().toString(),date:tod(),meal,name,th:el.dataset.th||'',cal,grams:grams?parseInt(grams):null,icon:el.dataset.icon||autoIcon(meal)});
   el.value='';el.dataset.th='';el.dataset.icon='';
   document.getElementById('fc').value='';document.getElementById('fg').value='';
-  save();rCal();rMeals();closeF();
+  saveUsers();rCal();rMeals();closeF();
 }
 
-// ── BROWSE ──────────────────────────────────────
+// ══ STATS ══════════════════════════════════════════
+function renderStats(){
+  const goal=U().goal||1800;
+  const logs=U().logs;
+  const weights=U().weights;
+
+  // last 14 days
+  const days14=[];
+  for(let i=13;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days14.push(d.toISOString().slice(0,10));}
+
+  // this week
+  const days7=days14.slice(-7);
+  const weekLogs=days7.map(d=>({date:d,cal:logs.filter(l=>l.date===d).reduce((s,l)=>s+l.cal,0)}));
+  const loggedDays=weekLogs.filter(d=>d.cal>0);
+  const avgCal=loggedDays.length?Math.round(loggedDays.reduce((s,d)=>s+d.cal,0)/loggedDays.length):0;
+  const bestDay=loggedDays.length?Math.min(...loggedDays.map(d=>d.cal)):0; // closest to goal
+  
+  // streak
+  let streak=0;
+  for(let i=0;i<30;i++){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const ds=d.toISOString().slice(0,10);
+    if(logs.some(l=>l.date===ds))streak++;else break;
+  }
+
+  document.getElementById('stAvgCal').textContent=avgCal||'—';
+  document.getElementById('stDaysLogged').textContent=loggedDays.length+'/7';
+  document.getElementById('stBestDay').textContent=bestDay||'—';
+  document.getElementById('stStreak').textContent=streak;
+  const wr=document.getElementById('weekRange');
+  wr.textContent=days7[0].slice(5)+' – '+days7[6].slice(5);
+
+  // calorie chart
+  const calData=days14.map(d=>logs.filter(l=>l.date===d).reduce((s,l)=>s+l.cal,0));
+  drawBarChart('calChart',days14.map(d=>d.slice(5)),calData,goal);
+
+  // weight chart
+  const wtData=weights.slice(-14);
+  drawLineChart('wtChart',wtData);
+
+  // weight stats row
+  if(weights.length>=2){
+    const first=weights[0].value,last=weights[weights.length-1].value;
+    const diff=(last-first).toFixed(1);
+    const col=diff<0?'var(--green)':diff>0?'var(--red)':'var(--text)';
+    document.getElementById('wtStatRow').innerHTML=`
+      <div style="background:var(--surface2);border-radius:8px;padding:8px 12px;flex:1;text-align:center">
+        <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--accent2)">${first.toFixed(1)}</div>
+        <div style="font-size:10px;color:var(--muted)">Start kg</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:8px;padding:8px 12px;flex:1;text-align:center">
+        <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--accent2)">${last.toFixed(1)}</div>
+        <div style="font-size:10px;color:var(--muted)">Current kg</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:8px;padding:8px 12px;flex:1;text-align:center">
+        <div style="font-family:'Playfair Display',serif;font-size:18px;color:${col}">${diff>0?'+':''}${diff}</div>
+        <div style="font-size:10px;color:var(--muted)">Change kg</div>
+      </div>`;
+  }
+
+  // streak heatmap (30 days)
+  const days30=[];
+  for(let i=29;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days30.push(d.toISOString().slice(0,10));}
+  document.getElementById('streakBar').innerHTML=days30.map(d=>{
+    const cal=logs.filter(l=>l.date===d).reduce((s,l)=>s+l.cal,0);
+    const isToday=d===tod();
+    const cls=cal>=goal?'streak-day goal':cal>0?'streak-day logged':'streak-day';
+    return `<div class="${cls}${isToday?' today':''}" title="${d}: ${cal} kcal">${new Date(d+'T12:00:00').getDate()}</div>`;
+  }).join('');
+}
+
+function drawBarChart(id,labels,data,goal){
+  const cv=document.getElementById(id);
+  const ctx=cv.getContext('2d');
+  const W=cv.offsetWidth||300,H=120;
+  cv.width=W*devicePixelRatio;cv.height=H*devicePixelRatio;ctx.scale(devicePixelRatio,devicePixelRatio);
+  ctx.clearRect(0,0,W,H);
+  const max=Math.max(...data,goal)*1.1||2000;
+  const bw=Math.floor(W/data.length)-3;
+  // goal line
+  const gy=H-10-((goal/max)*(H-20));
+  ctx.strokeStyle='rgba(200,133,74,.4)';ctx.lineWidth=1;ctx.setLineDash([4,3]);
+  ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(W,gy);ctx.stroke();ctx.setLineDash([]);
+  // bars
+  data.forEach((v,i)=>{
+    const x=i*(bw+3)+1;
+    const bh=Math.max(2,(v/max)*(H-20));
+    const y=H-10-bh;
+    ctx.fillStyle=v===0?'#3d3328':v>goal?'rgba(196,107,90,.7)':'rgba(200,133,74,.7)';
+    ctx.beginPath();
+    ctx.roundRect?ctx.roundRect(x,y,bw,bh,3):ctx.rect(x,y,bw,bh);
+    ctx.fill();
+  });
+  // last value label
+  const last=data[data.length-1];
+  if(last>0){
+    const x=(data.length-1)*(bw+3)+1+bw/2;
+    const bh=(last/max)*(H-20);
+    const y=H-10-bh-12;
+    ctx.fillStyle='#e0a96d';ctx.font=`9px DM Mono,monospace`;ctx.textAlign='center';
+    ctx.fillText(last,x,y);
+  }
+}
+
+function drawLineChart(id,ws){
+  const cv=document.getElementById(id);
+  const ctx=cv.getContext('2d');
+  const W=cv.offsetWidth||300,H=110;
+  cv.width=W*devicePixelRatio;cv.height=H*devicePixelRatio;ctx.scale(devicePixelRatio,devicePixelRatio);
+  ctx.clearRect(0,0,W,H);
+  if(!ws.length){
+    ctx.fillStyle='var(--muted)';ctx.font='12px DM Mono,monospace';ctx.textAlign='center';
+    ctx.fillText('No weight data yet',W/2,H/2);return;
+  }
+  const vals=ws.map(w=>w.value);
+  const mn=Math.min(...vals)-1,mx=Math.max(...vals)+1;
+  const xs=W/(ws.length>1?ws.length-1:1);
+  const ys=v=>H-14-((v-mn)/(mx-mn))*(H-28);
+  ctx.strokeStyle='#3d3328';ctx.lineWidth=1;
+  for(let i=0;i<=3;i++){const y=6+(H-20)*i/3;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  if(ws.length>1){
+    const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgba(200,133,74,.28)');g.addColorStop(1,'rgba(200,133,74,0)');
+    ctx.beginPath();ctx.moveTo(0,ys(vals[0]));
+    for(let i=1;i<ws.length;i++)ctx.lineTo(i*xs,ys(vals[i]));
+    ctx.lineTo((ws.length-1)*xs,H);ctx.lineTo(0,H);ctx.closePath();ctx.fillStyle=g;ctx.fill();
+    ctx.beginPath();ctx.strokeStyle='#c8854a';ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.lineCap='round';
+    ctx.moveTo(0,ys(vals[0]));for(let i=1;i<ws.length;i++)ctx.lineTo(i*xs,ys(vals[i]));ctx.stroke();
+  }
+  for(let i=0;i<ws.length;i++){ctx.beginPath();ctx.arc(i*xs,ys(vals[i]),4,0,Math.PI*2);ctx.fillStyle='#e0a96d';ctx.fill();}
+  const last=ws[ws.length-1];
+  ctx.fillStyle='#e0a96d';ctx.font='10px DM Mono,monospace';ctx.textAlign='center';
+  ctx.fillText(last.value.toFixed(1),(ws.length-1)*xs,ys(last.value)-9);
+}
+
+// ══ BROWSE ══════════════════════════════════════
 function buildCatPills(){
   document.getElementById('catPills').innerHTML=CATS.map(c=>`<div class="pill${c.id==='all'?' active':''}" data-cat="${c.id}" onclick="setCat('${c.id}')">${c.label}</div>`).join('');
 }
@@ -544,7 +887,7 @@ function renderDB(){
   let items=DB;
   if(activeCat!=='all')items=items.filter(f=>f.cat===activeCat);
   if(q)items=items.filter(f=>f.name.toLowerCase().includes(q)||f.th.includes(q));
-  document.getElementById('dbGrid').innerHTML=items.map(f=>`
+  document.getElementById('dbGrid').innerHTML=items.map((f,i)=>`
     <div class="db-card" onclick="quickAdd(${DB.indexOf(f)})">
       <div class="dc-name">${f.icon} ${f.name}</div>
       <div class="dc-th">${f.th}</div>
@@ -561,26 +904,26 @@ function quickAdd(i){
   sTab('today');togF();
 }
 
-// ── TABS ────────────────────────────────────────
+// ══ TABS ════════════════════════════════════════
 function sTab(t){
-  ['today','browse','history','weight'].forEach((n,i)=>document.querySelectorAll('.tab')[i].classList.toggle('active',n===t));
+  ['today','stats','browse','history'].forEach((n,i)=>document.querySelectorAll('.tab')[i].classList.toggle('active',n===t));
   document.getElementById('tv').style.display=t==='today'?'block':'none';
+  document.getElementById('sv').style.display=t==='stats'?'block':'none';
   document.getElementById('bv').style.display=t==='browse'?'block':'none';
   document.getElementById('hv').style.display=t==='history'?'block':'none';
-  document.getElementById('wv2').style.display=t==='weight'?'block':'none';
-  if(t==='history')rHist();
-  if(t==='weight')setTimeout(rWChart,50);
+  if(t==='stats')setTimeout(renderStats,50);
   if(t==='browse')renderDB();
+  if(t==='history')rHist();
 }
 
-// ── HISTORY ─────────────────────────────────────
+// ══ HISTORY ═════════════════════════════════════
 function rHist(){
   const hc=document.getElementById('hc');
-  const dates=[...new Set(S.logs.map(l=>l.date))].sort().reverse();
+  const dates=[...new Set(U().logs.map(l=>l.date))].sort().reverse();
   if(!dates.length){hc.innerHTML='<div class="empty"><div class="big">📖</div>No history yet.</div>';return;}
   let h='';
   for(const d of dates){
-    const items=S.logs.filter(l=>l.date===d);
+    const items=U().logs.filter(l=>l.date===d);
     const tot=items.reduce((s,l)=>s+l.cal,0);
     const label=new Date(d+'T12:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
     h+=`<div class="history-day"><div class="hd-header"><span class="hdate">${label}</span><span class="hcal">${tot} kcal · ${items.length} items</span></div>`;
@@ -590,48 +933,18 @@ function rHist(){
   hc.innerHTML=h;
 }
 
-// ── WEIGHT CHART ────────────────────────────────
-function rWChart(){
-  const ws=S.weights.slice(-14);
-  const wl=document.getElementById('wlist');
-  if(!ws.length){wl.innerHTML='<div style="text-align:center;color:var(--muted);font-size:12px;padding:16px 0">No weight data yet</div>';return;}
-  const cv=document.getElementById('wc');
-  const ctx=cv.getContext('2d');
-  const W=cv.offsetWidth||280,H=110;
-  cv.width=W*devicePixelRatio;cv.height=H*devicePixelRatio;ctx.scale(devicePixelRatio,devicePixelRatio);
-  const vals=ws.map(w=>w.value);
-  const mn=Math.min(...vals)-1,mx=Math.max(...vals)+1;
-  const xs=W/(ws.length>1?ws.length-1:1);
-  const ys=v=>H-14-((v-mn)/(mx-mn))*(H-28);
-  ctx.clearRect(0,0,W,H);
-  ctx.strokeStyle='#3d3328';ctx.lineWidth=1;
-  for(let i=0;i<=3;i++){const y=6+(H-20)*i/3;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
-  if(ws.length>1){
-    const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgba(200,133,74,.28)');g.addColorStop(1,'rgba(200,133,74,0)');
-    ctx.beginPath();ctx.moveTo(0,ys(vals[0]));
-    for(let i=1;i<ws.length;i++)ctx.lineTo(i*xs,ys(vals[i]));
-    ctx.lineTo((ws.length-1)*xs,H);ctx.lineTo(0,H);ctx.closePath();ctx.fillStyle=g;ctx.fill();
-    ctx.beginPath();ctx.strokeStyle='#c8854a';ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.lineCap='round';
-    ctx.moveTo(0,ys(vals[0]));for(let i=1;i<ws.length;i++)ctx.lineTo(i*xs,ys(vals[i]));ctx.stroke();
-  }
-  for(let i=0;i<ws.length;i++){ctx.beginPath();ctx.arc(i*xs,ys(vals[i]),4,0,Math.PI*2);ctx.fillStyle='#e0a96d';ctx.fill();}
-  const last=ws[ws.length-1];
-  ctx.fillStyle='#e0a96d';ctx.font='10px DM Mono,monospace';ctx.textAlign='center';
-  ctx.fillText(last.value.toFixed(1),(ws.length-1)*xs,ys(last.value)-9);
-  let wh='';
-  for(const w of ws.slice().reverse().slice(0,6)){
-    const label=new Date(w.date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
-    wh+=`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--muted)">${label}</span><span style="color:var(--accent2);font-family:'Playfair Display',serif;font-size:15px">${w.value.toFixed(1)} kg</span></div>`;
-  }
-  wl.innerHTML=wh;
-}
+// ══ PWA ════════════════════════════════════════
+window.addEventListener('online',()=>document.getElementById('offlineBadge').classList.remove('show'));
+window.addEventListener('offline',()=>document.getElementById('offlineBadge').classList.add('show'));
+if(!navigator.onLine)document.getElementById('offlineBadge').classList.add('show');
+if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 
 document.addEventListener('keydown',e=>{
   if(e.key==='Enter'&&document.getElementById('af').classList.contains('open')&&acSel<0)addFood();
 });
 
-init();
+// ══ START ══════════════════════════════════════
+showLogin();
 </script>
 </body>
 </html>
-
